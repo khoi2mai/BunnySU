@@ -11,8 +11,10 @@ val androidBuildToolsVersion by extra("36.1.0")
 val androidCompileNdkVersion: String by extra(libs.versions.ndk.get())
 val androidSourceCompatibility by extra(JavaVersion.VERSION_21)
 val androidTargetCompatibility by extra(JavaVersion.VERSION_21)
-val managerVersionCode by extra(getVersionCode())
-val managerVersionName by extra(getVersionName())
+
+// Force Manager version to match current BunnySU driver
+val managerVersionCode by extra(32493)
+val managerVersionName by extra("v3.2.4-bunny-32493")
 
 fun getGitCommitCount(): Int {
     val process = Runtime.getRuntime().exec(arrayOf("git", "rev-list", "--count", "HEAD"))
