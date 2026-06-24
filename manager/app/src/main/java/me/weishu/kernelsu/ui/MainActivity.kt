@@ -146,7 +146,7 @@ class MainActivity : ComponentActivity() {
                 LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
                 LocalSnackbarHost provides snackBarHostState
             ) {
-                KernelSUTheme(appSettings = appSettings, uiMode = uiMode) {
+                KernelSUTheme(appSettings = appSettings) {
                     HandleDeepLink(intentState = intentState.collectAsStateWithLifecycle())
                     ZipFileIntentHandler(intentState = intentState, isManager = isManager)
                     ShortcutIntentHandler(intentState = intentState)

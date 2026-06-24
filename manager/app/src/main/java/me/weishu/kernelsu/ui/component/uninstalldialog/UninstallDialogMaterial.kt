@@ -21,7 +21,7 @@ import me.weishu.kernelsu.ui.screen.flash.UninstallType.PERMANENT
 import me.weishu.kernelsu.ui.screen.flash.UninstallType.RESTORE_STOCK_IMAGE
 
 @Composable
-fun UninstallDialog(
+fun UninstallDialogMaterial(
     show: Boolean,
     onDismissRequest: () -> Unit
 ) {

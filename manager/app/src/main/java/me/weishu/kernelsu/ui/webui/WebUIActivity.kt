@@ -62,7 +62,7 @@ class WebUIActivity : ComponentActivity() {
             }
 
             CompositionLocalProvider(LocalUiMode provides uiMode) {
-                KernelSUTheme(appSettings = appSettings, uiMode = uiMode) {
+                KernelSUTheme(appSettings = appSettings) {
                     MainContent(activity = this, onFinish = { finish() })
                 }
             }
