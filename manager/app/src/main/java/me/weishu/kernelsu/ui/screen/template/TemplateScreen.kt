@@ -16,8 +16,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.weishu.kernelsu.R
-import me.weishu.kernelsu.ui.LocalUiMode
-import me.weishu.kernelsu.ui.UiMode
 import me.weishu.kernelsu.ui.navigation3.LocalNavigator
 import me.weishu.kernelsu.ui.navigation3.Route
 import me.weishu.kernelsu.ui.util.isNetworkAvailable
@@ -25,7 +23,6 @@ import me.weishu.kernelsu.ui.viewmodel.TemplateViewModel
 
 @Composable
 fun AppProfileTemplateScreen() {
-    val uiMode = LocalUiMode.current
     val navigator = LocalNavigator.current
     val viewModel = viewModel<TemplateViewModel>()
     val screenState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -43,9 +40,6 @@ fun AppProfileTemplateScreen() {
     LaunchedEffect(Unit) {
         navigator.observeResult<Boolean>(requestKey).collect { success ->
             if (success) {
-                if (uiMode == UiMode.Miuix) {
-                    navigator.clearResult(requestKey)
-                }
                 viewModel.fetchTemplates()
             }
         }
@@ -102,40 +96,19 @@ fun AppProfileTemplateScreen() {
             }
         },
         onCreateTemplate = {
-            when (uiMode) {
-                UiMode.Miuix -> navigator.navigateForResult(
-                    Route.TemplateEditor(TemplateViewModel.TemplateInfo(), false),
-                    requestKey,
-                )
-
-                UiMode.Material -> navigator.push(
-                    Route.TemplateEditor(TemplateViewModel.TemplateInfo(), false)
-                )
-            }
+            navigator.push(
+                Route.TemplateEditor(TemplateViewModel.TemplateInfo(), false)
+            )
         },
         onOpenTemplate = { template ->
-            when (uiMode) {
-                UiMode.Miuix -> navigator.navigateForResult(
-                    Route.TemplateEditor(template, !template.local),
-                    requestKey,
-                )
-
-                UiMode.Material -> navigator.push(
-                    Route.TemplateEditor(template, !template.local)
-                )
-            }
+            navigator.push(
+                Route.TemplateEditor(template, !template.local)
+            )
         },
     )
 
-    when (uiMode) {
-        UiMode.Miuix -> AppProfileTemplateScreenMiuix(
-            state = uiState,
-            actions = actions,
-        )
-
-        UiMode.Material -> AppProfileTemplateScreenMaterial(
-            state = uiState,
-            actions = actions,
-        )
-    }
+    AppProfileTemplateScreenMaterial(
+        state = uiState,
+        actions = actions,
+    )
 }

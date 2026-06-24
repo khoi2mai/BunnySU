@@ -12,8 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.weishu.kernelsu.Natives
-import me.weishu.kernelsu.ui.LocalUiMode
-import me.weishu.kernelsu.ui.UiMode
 import me.weishu.kernelsu.ui.navigation3.LocalNavigator
 import me.weishu.kernelsu.ui.util.reboot
 
@@ -59,8 +57,5 @@ fun FlashScreen(flashIt: FlashIt) {
         onDismissJailbreakWarning = dropUnlessResumed { navigator.pop() },
     )
 
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> FlashScreenMiuix(state, actions)
-        UiMode.Material -> FlashScreenMaterial(state, actions)
-    }
+    FlashScreenMaterial(state, actions)
 }

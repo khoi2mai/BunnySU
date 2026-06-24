@@ -19,8 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.dropUnlessResumed
 import me.weishu.kernelsu.R
 import me.weishu.kernelsu.getKernelVersion
-import me.weishu.kernelsu.ui.LocalUiMode
-import me.weishu.kernelsu.ui.UiMode
 import me.weishu.kernelsu.ui.component.choosekmidialog.ChooseKmiDialog
 import me.weishu.kernelsu.ui.navigation3.LocalNavigator
 import me.weishu.kernelsu.ui.navigation3.Route
@@ -185,8 +183,5 @@ fun InstallScreen() {
         },
     )
 
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> InstallScreenMiuix(state, actions)
-        UiMode.Material -> InstallScreenMaterial(state, actions)
-    }
+    InstallScreenMaterial(state, actions)
 }

@@ -9,8 +9,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.dropUnlessResumed
-import me.weishu.kernelsu.ui.LocalUiMode
-import me.weishu.kernelsu.ui.UiMode
 import me.weishu.kernelsu.ui.navigation3.LocalNavigator
 
 @Composable
@@ -47,8 +45,5 @@ fun ExecuteModuleActionScreen(moduleId: String, fromShortcut: Boolean = false) {
         onSaveLog = saveLog(logContent, context, scope),
     )
 
-    when (LocalUiMode.current) {
-        UiMode.Miuix -> ExecuteModuleActionScreenMiuix(state, actions)
-        UiMode.Material -> ExecuteModuleActionScreenMaterial(state, actions)
-    }
+    ExecuteModuleActionScreenMaterial(state, actions)
 }

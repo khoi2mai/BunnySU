@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -54,12 +55,6 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.weishu.kernelsu.Natives
 import me.weishu.kernelsu.R
@@ -101,8 +96,6 @@ import me.weishu.kernelsu.ui.util.rememberContentReady
 import me.weishu.kernelsu.ui.util.rootAvailable
 import me.weishu.kernelsu.ui.viewmodel.MainActivityViewModel
 import me.weishu.kernelsu.ui.webui.WebUIActivity
-import top.yukonga.miuix.kmp.basic.Scaffold
-import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -151,7 +144,6 @@ class MainActivity : ComponentActivity() {
                 LocalEnableBlur provides uiState.enableBlur,
                 LocalEnableFloatingBottomBar provides uiState.enableFloatingBottomBar,
                 LocalEnableFloatingBottomBarBlur provides uiState.enableFloatingBottomBarBlur,
-                LocalUiMode provides uiMode,
                 LocalSnackbarHost provides snackBarHostState
             ) {
                 KernelSUTheme(appSettings = appSettings, uiMode = uiMode) {
@@ -175,7 +167,6 @@ class MainActivity : ComponentActivity() {
                                             navigator.pop()
                                         }
                                     }
-
                                     else -> navigator.pop()
                                 }
                             },
@@ -200,10 +191,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    when (uiMode) {
-                        UiMode.Material -> androidx.compose.material3.Scaffold { navDisplay() }
-                        UiMode.Miuix -> Scaffold { navDisplay() }
-                    }
+                    Scaffold { navDisplay() }
                 }
             }
         }
@@ -212,7 +200,6 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        // Increment intentState to trigger LaunchedEffect re-execution
         intentState.value += 1
     }
 }
@@ -223,33 +210,12 @@ val LocalMainPagerState = staticCompositionLocalOf<MainPagerState> { error("Loca
 @Composable
 fun MainScreen() {
     val navController = LocalNavigator.current
-    val enableBlur = LocalEnableBlur.current
     val enableFloatingBottomBar = LocalEnableFloatingBottomBar.current
-    val enableFloatingBottomBarBlur = LocalEnableFloatingBottomBarBlur.current
     val pagerState = rememberPagerState(pageCount = { 4 })
     val mainPagerState = rememberMainPagerState(pagerState)
     val isManager = Natives.isManager
     val isFullFeatured = isManager && !Natives.requireNewKernel() && rootAvailable()
-    var userScrollEnabled by remember(isFullFeatured) { mutableStateOf(isFullFeatured) }
-    val uiMode = LocalUiMode.current
-    val surfaceColor = when (uiMode) {
-        UiMode.Material -> MaterialTheme.colorScheme.surface // Haze is not used in Material, this is just a placeholder
-        UiMode.Miuix -> MiuixTheme.colorScheme.surface
-    }
-    val hazeState = remember { HazeState() }
-    val hazeStyle = if (enableBlur) {
-        HazeStyle(
-            backgroundColor = surfaceColor,
-            tint = HazeTint(surfaceColor.copy(0.8f))
-        )
-    } else {
-        HazeStyle.Unspecified
-    }
-
-    val backdrop = rememberLayerBackdrop {
-        drawRect(surfaceColor)
-        drawContent()
-    }
+    val userScrollEnabled by remember(isFullFeatured) { mutableStateOf(isFullFeatured) }
 
     LaunchedEffect(mainPagerState.pagerState.currentPage) {
         mainPagerState.syncPage()
@@ -258,7 +224,7 @@ fun MainScreen() {
     MainScreenBackHandler(mainPagerState, navController)
 
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val useNavigationRail = isLandscape && !(uiMode == UiMode.Miuix && enableFloatingBottomBar)
+    val useNavigationRail = isLandscape
 
     CompositionLocalProvider(
         LocalMainPagerState provides mainPagerState
@@ -266,9 +232,6 @@ fun MainScreen() {
         val contentReady = rememberContentReady()
         val pagerContent = @Composable { bottomInnerPadding: Dp ->
             HorizontalPager(
-                modifier = Modifier
-                    .then(if (enableBlur) Modifier.hazeSource(state = hazeState) else Modifier)
-                    .then(if (enableFloatingBottomBar && enableFloatingBottomBarBlur) Modifier.layerBackdrop(backdrop) else Modifier),
                 state = mainPagerState.pagerState,
                 beyondViewportPageCount = if (contentReady) 3 else 0,
                 userScrollEnabled = userScrollEnabled,
@@ -288,36 +251,15 @@ fun MainScreen() {
                 .only(WindowInsetsSides.Start)
             val navBarBottomPadding = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
 
-            when (uiMode) {
-                UiMode.Material -> androidx.compose.material3.Scaffold {
-                    Row {
-                        SideRail(
-                            hazeState = hazeState,
-                            hazeStyle = hazeStyle,
-                        )
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .consumeWindowInsets(startInsets)
-                        ) {
-                            pagerContent(navBarBottomPadding)
-                        }
-                    }
-                }
-
-                UiMode.Miuix -> Scaffold { _ ->
-                    Row {
-                        SideRail(
-                            hazeState = hazeState,
-                            hazeStyle = hazeStyle,
-                        )
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .consumeWindowInsets(startInsets)
-                        ) {
-                            pagerContent(navBarBottomPadding)
-                        }
+            Scaffold {
+                Row {
+                    SideRail()
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .consumeWindowInsets(startInsets)
+                    ) {
+                        pagerContent(navBarBottomPadding)
                     }
                 }
             }
@@ -327,27 +269,17 @@ fun MainScreen() {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     BottomBar(
-                        hazeState = hazeState,
-                        hazeStyle = hazeStyle,
-                        backdrop = backdrop,
                         modifier = Modifier.align(Alignment.BottomCenter),
                     )
                 }
             }
 
-            when (uiMode) {
-                UiMode.Material -> androidx.compose.material3.Scaffold(bottomBar = bottomBar) { innerPadding ->
-                    pagerContent(innerPadding.calculateBottomPadding())
-                }
-
-                UiMode.Miuix -> Scaffold(bottomBar = bottomBar) { innerPadding ->
-                    pagerContent(innerPadding.calculateBottomPadding())
-                }
+            Scaffold(bottomBar = bottomBar) { innerPadding ->
+                pagerContent(innerPadding.calculateBottomPadding())
             }
         }
     }
 }
-
 
 @Composable
 private fun MainScreenBackHandler(
@@ -371,11 +303,6 @@ private fun MainScreenBackHandler(
     )
 }
 
-/**
- * Handles ZIP file installation from external apps (e.g., file managers).
- * - In normal mode: Shows a confirmation dialog before installation
- * - In safe mode: Shows a Toast notification and prevents installation
- */
 @SuppressLint("StringFormatInvalid", "LocalContextGetResourceValueCall")
 @Composable
 private fun ZipFileIntentHandler(

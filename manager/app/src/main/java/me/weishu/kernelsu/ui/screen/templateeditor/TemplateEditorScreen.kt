@@ -11,8 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.dropUnlessResumed
 import me.weishu.kernelsu.R
-import me.weishu.kernelsu.ui.LocalUiMode
-import me.weishu.kernelsu.ui.UiMode
 import me.weishu.kernelsu.ui.navigation3.LocalNavigator
 import me.weishu.kernelsu.ui.util.deleteAppProfileTemplate
 import me.weishu.kernelsu.ui.viewmodel.TemplateViewModel
@@ -21,9 +19,7 @@ import me.weishu.kernelsu.ui.viewmodel.TemplateViewModel
 fun TemplateEditorScreen(template: TemplateViewModel.TemplateInfo, readOnly: Boolean) {
     val navigator = LocalNavigator.current
     val context = LocalContext.current
-    val uiMode = LocalUiMode.current
     val isCreation = template.id.isBlank()
-    val autoSave = uiMode == UiMode.Miuix && !isCreation
 
     var currentTemplate by rememberSaveable { mutableStateOf(template) }
     var idErrorHint by remember { mutableStateOf("") }
@@ -45,11 +41,6 @@ fun TemplateEditorScreen(template: TemplateViewModel.TemplateInfo, readOnly: Boo
     }
 
     fun updateTemplate(updatedTemplate: TemplateViewModel.TemplateInfo) {
-        if (autoSave) {
-            if (!saveTemplate(updatedTemplate)) {
-                return
-            }
-        }
         currentTemplate = updatedTemplate
     }
 
@@ -62,20 +53,6 @@ fun TemplateEditorScreen(template: TemplateViewModel.TemplateInfo, readOnly: Boo
     )
 
     fun saveCurrentTemplate() {
-        if (uiMode == UiMode.Miuix) {
-            when (idCheck(currentTemplate.id)) {
-                1 -> {
-                    showToast(idConflictError)
-                    return
-                }
-
-                2 -> {
-                    showToast(idInvalidError)
-                    return
-                }
-            }
-        }
-
         if (saveTemplate(currentTemplate, isCreation)) {
             navigator.setResult("template_edit", true)
         } else {
@@ -125,15 +102,8 @@ fun TemplateEditorScreen(template: TemplateViewModel.TemplateInfo, readOnly: Boo
         },
     )
 
-    when (uiMode) {
-        UiMode.Miuix -> TemplateEditorScreenMiuix(
-            state = uiState,
-            actions = actions,
-        )
-
-        UiMode.Material -> TemplateEditorScreenMaterial(
-            state = uiState,
-            actions = actions,
-        )
-    }
+    TemplateEditorScreenMaterial(
+        state = uiState,
+        actions = actions,
+    )
 }
