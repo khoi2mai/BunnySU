@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,18 +21,24 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Block
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material.icons.filled.AutoAwesomeMotion
+import androidx.compose.material.icons.filled.AutoFixHigh
+import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.LocalPolice
+import androidx.compose.material.icons.filled.Mood
+import androidx.compose.material.icons.filled.MoodBad
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.SentimentDissatisfied
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
@@ -40,10 +47,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -62,7 +73,7 @@ fun HomePagerMaterial(
     actions: HomeActions,
     bottomInnerPadding: Dp,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
         topBar = { TopBar(scrollBehavior = scrollBehavior) },
@@ -135,7 +146,7 @@ private fun UpdateCard(
         val updateDialog = rememberConfirmDialog(onConfirm = { actions.onOpenUrl(newVersion.downloadUrl) })
         WarningCard(
             message = stringResource(id = R.string.new_version_available, newVersion.versionCode),
-            MaterialTheme.colorScheme.outlineVariant
+            color = MaterialTheme.colorScheme.outlineVariant
         ) {
             if (newVersion.changelog.isEmpty()) {
                 actions.onOpenUrl(newVersion.downloadUrl)
@@ -151,13 +162,29 @@ private fun UpdateCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
-    LargeFlexibleTopAppBar(
-        title = { Text(stringResource(R.string.app_name)) },
+    TopAppBar(
+        modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_bunny_su),
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Black
+                )
+            }
+        },
         actions = { RebootListPopup() },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -174,17 +201,21 @@ private fun StatusCard(
     actions: HomeActions,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        TonalCard(
-            containerColor = if (state.ksuVersion != null) {
-                MaterialTheme.colorScheme.secondaryContainer
-            } else {
-                MaterialTheme.colorScheme.errorContainer
-            },
-            onClick = {
-                if (!state.isLateLoadMode) {
-                    actions.onInstallClick()
+        ElevatedCard(
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = when {
+                    state.ksuVersion != null -> MaterialTheme.colorScheme.primary
+                    state.kernelVersion.isGKI() -> MaterialTheme.colorScheme.secondaryContainer
+                    else -> MaterialTheme.colorScheme.errorContainer
                 }
-            }
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    if (!state.isLateLoadMode) {
+                        actions.onInstallClick()
+                    }
+                }
         ) {
             Row(
                 modifier = Modifier
@@ -200,48 +231,59 @@ private fun StatusCard(
                             else -> "GKI"
                         }
 
-                        Icon(Icons.Outlined.CheckCircle, stringResource(R.string.home_working))
+                        Icon(
+                            imageVector = Icons.Filled.Mood,
+                            contentDescription = stringResource(R.string.home_working),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
                         Column(Modifier.padding(start = 20.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = stringResource(id = R.string.home_working),
-                                    style = MaterialTheme.typography.titleMedium
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
                                 if (workingMode.isNotEmpty()) {
                                     Spacer(Modifier.width(8.dp))
                                     StatusTag(
                                         label = workingMode,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                                        backgroundColor = MaterialTheme.colorScheme.primary
+                                        contentColor = MaterialTheme.colorScheme.primary,
+                                        backgroundColor = MaterialTheme.colorScheme.onPrimary
                                     )
                                 }
                                 if (state.isSafeMode) {
                                     Spacer(Modifier.width(8.dp))
                                     StatusTag(
                                         label = stringResource(id = R.string.safe_mode),
-                                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                                        backgroundColor = MaterialTheme.colorScheme.errorContainer
+                                        contentColor = MaterialTheme.colorScheme.errorContainer,
+                                        backgroundColor = MaterialTheme.colorScheme.onErrorContainer
                                     )
                                 }
                                 if (state.isLateLoadMode) {
                                     Spacer(Modifier.width(8.dp))
                                     StatusTag(
                                         label = stringResource(id = R.string.jailbreak_mode),
-                                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                                        backgroundColor = MaterialTheme.colorScheme.errorContainer
+                                        contentColor = MaterialTheme.colorScheme.errorContainer,
+                                        backgroundColor = MaterialTheme.colorScheme.onErrorContainer
                                     )
                                 }
                             }
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 text = stringResource(R.string.home_working_version, state.ksuVersion),
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
 
                     state.kernelVersion.isGKI() -> {
-                        Icon(Icons.Outlined.Warning, stringResource(R.string.home_not_installed))
+                        Icon(
+                            imageVector = Icons.Filled.AutoFixHigh,
+                            contentDescription = stringResource(R.string.home_not_installed),
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
                         Column(
                             modifier = Modifier
                                 .padding(start = 20.dp)
@@ -249,12 +291,14 @@ private fun StatusCard(
                         ) {
                             Text(
                                 text = stringResource(R.string.home_not_installed),
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 text = stringResource(R.string.home_click_to_install),
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
                         if (state.isSELinuxPermissive) {
@@ -271,22 +315,29 @@ private fun StatusCard(
                     }
 
                     else -> {
-                        Icon(Icons.Outlined.Block, stringResource(R.string.home_unsupported))
+                        Icon(
+                            imageVector = Icons.Filled.MoodBad,
+                            contentDescription = stringResource(R.string.home_unsupported),
+                            tint = MaterialTheme.colorScheme.onErrorContainer
+                        )
                         Column(Modifier.padding(start = 20.dp)) {
                             Text(
                                 text = stringResource(R.string.home_unsupported),
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onErrorContainer
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 text = stringResource(R.string.home_unsupported_reason),
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onErrorContainer
                             )
                         }
                     }
                 }
             }
         }
+
         if (state.isFullFeatured) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -349,19 +400,27 @@ private fun WarningCard(
     color: Color = MaterialTheme.colorScheme.error,
     onClick: (() -> Unit)? = null
 ) {
-    val content = @Composable {
+    ElevatedCard(
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = color
+        )
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .then(onClick?.let { Modifier.clickable { it() } } ?: Modifier)
+                .padding(24.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = message, style = MaterialTheme.typography.bodyMedium)
+            Icon(
+                imageVector = Icons.Filled.SentimentDissatisfied,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 20.dp)
+            )
+            Text(
+                text = message, style = MaterialTheme.typography.bodyMedium
+            )
         }
-    }
-    if (onClick != null) {
-        TonalCard(containerColor = color, onClick = onClick, content = content)
-    } else {
-        TonalCard(containerColor = color, content = content)
     }
 }
 
@@ -376,7 +435,11 @@ private fun LearnMoreCard(onOpenUrl: (String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(text = stringResource(R.string.home_learn_kernelsu), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    text = stringResource(R.string.home_learn_kernelsu), 
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = stringResource(R.string.home_click_to_learn_kernelsu),
@@ -398,7 +461,11 @@ private fun DonateCard(onOpenUrl: (String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(text = stringResource(R.string.home_support_title), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    text = stringResource(R.string.home_support_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = stringResource(R.string.home_support_content),
@@ -419,20 +486,57 @@ private fun InfoCard(systemInfo: SystemInfo) {
                 .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 16.dp)
         ) {
             @Composable
-            fun InfoCardItem(label: String, content: String) {
-                Text(text = label, style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    text = content,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.outline
-                )
+            fun InfoCardItem(label: String, content: String, icon: Any? = null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (icon != null) {
+                        when (icon) {
+                            is ImageVector -> Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 20.dp)
+                            )
+                            is Painter -> Icon(
+                                painter = icon,
+                                contentDescription = null,
+                                modifier = Modifier.padding(end = 20.dp)
+                            )
+                        }
+                    }
+                    Column {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = content,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.padding(top = 4.dp),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
             }
 
-            InfoCardItem(stringResource(R.string.home_kernel), systemInfo.kernelVersion)
+            InfoCardItem(
+                label = stringResource(R.string.home_manager_version),
+                content = systemInfo.managerVersion,
+                icon = Icons.Filled.AutoAwesomeMotion
+            )
             Spacer(Modifier.height(16.dp))
-            InfoCardItem(stringResource(R.string.home_manager_version), systemInfo.managerVersion)
+            InfoCardItem(
+                label = stringResource(R.string.home_kernel),
+                content = systemInfo.kernelVersion,
+                icon = painterResource(R.drawable.ic_linux)
+            )
             Spacer(Modifier.height(16.dp))
-            InfoCardItem(stringResource(R.string.home_fingerprint), systemInfo.fingerprint)
+            InfoCardItem(
+                label = stringResource(R.string.home_fingerprint),
+                content = systemInfo.fingerprint,
+                icon = Icons.Filled.Fingerprint
+            )
             Spacer(Modifier.height(16.dp))
             val selinuxDisplay = when (systemInfo.selinuxStatus) {
                 "Enforcing" -> stringResource(R.string.selinux_status_enforcing)
@@ -440,7 +544,11 @@ private fun InfoCard(systemInfo: SystemInfo) {
                 "Disabled" -> stringResource(R.string.selinux_status_disabled)
                 else -> stringResource(R.string.selinux_status_unknown)
             }
-            InfoCardItem(stringResource(R.string.home_selinux_status), selinuxDisplay)
+            InfoCardItem(
+                label = stringResource(R.string.home_selinux_status),
+                content = selinuxDisplay,
+                icon = Icons.Filled.Security
+            )
             Spacer(Modifier.height(16.dp))
             val seccompDisplay = when (systemInfo.seccompStatus) {
                 -1 -> stringResource(R.string.seccomp_status_not_supported)
@@ -449,7 +557,11 @@ private fun InfoCard(systemInfo: SystemInfo) {
                 2 -> stringResource(R.string.seccomp_status_filter)
                 else -> stringResource(R.string.seccomp_status_unknown)
             }
-            InfoCardItem(stringResource(R.string.home_seccomp_status), seccompDisplay)
+            InfoCardItem(
+                label = stringResource(R.string.home_seccomp_status),
+                content = seccompDisplay,
+                icon = Icons.Filled.LocalPolice
+            )
         }
     }
 }
@@ -488,8 +600,8 @@ private fun StatusCardJailbreakPreview() {
 }
 
 private val previewSystemInfo = SystemInfo(
-    kernelVersion = "6.1.0-android14-0-g1234567",
-    managerVersion = "1.0.0 (10000)",
+    kernelVersion = "6.1.0-android14-0-g123456789000-ab12345678",
+    managerVersion = "3.0.0 (30000)",
     fingerprint = "google/raven/raven:14/AP1A.240305.019:user/release-keys",
     selinuxStatus = "Enforcing",
     seccompStatus = 2
@@ -582,5 +694,5 @@ private fun previewHomeScreenState(
     currentManagerVersionCode = 10000,
     superuserCount = superuserCount,
     moduleCount = moduleCount,
-    systemInfo = previewSystemInfo.copy(selinuxStatus = selinuxStatus),
+    systemInfo = previewSystemInfo.copy(selinuxStatus = selinuxStatus)
 )
