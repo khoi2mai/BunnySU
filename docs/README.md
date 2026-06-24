@@ -15,7 +15,7 @@
   <a href="/LICENSE">
     <img src="https://img.shields.io/github/license/khoi2mai/BunnySU?logo=gnu" alt="License">
   </a>
-  <a href="https://t.me/KernelSU">
+  <a href="https://t.me/khoi2mai">
     <img src="https://img.shields.io/badge/Telegram-Community-blue?logo=telegram" alt="Telegram">
   </a>
 </p>
