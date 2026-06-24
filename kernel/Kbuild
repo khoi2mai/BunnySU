@@ -9,6 +9,7 @@ kernelsu-objs += hook/setuid_hook.o
 kernelsu-objs += hook/syscall_event_bridge.o
 kernelsu-objs += hook/syscall_hook_manager.o
 kernelsu-objs += hook/tp_marker.o
+
 ifeq ($(CONFIG_ARM64),y)
 kernelsu-objs += hook/arm64/patch_memory.o
 kernelsu-objs += hook/arm64/syscall_hook.o
@@ -53,9 +54,11 @@ ifdef KBUILD_EXTMOD
 ifeq ($(CONFIG_KSU_DISABLE_MANAGER),y)
 ccflags-y += -DCONFIG_KSU_DISABLE_MANAGER=1
 endif
+
 ifeq ($(CONFIG_KSU_DISABLE_POLICY),y)
 ccflags-y += -DCONFIG_KSU_DISABLE_POLICY=1
 endif
+
 ifeq ($(CONFIG_KSU_DEBUG),y)
 ccflags-y += -DCONFIG_KSU_DEBUG=1
 endif
@@ -76,41 +79,61 @@ obj-$(CONFIG_KSU) += kernelsu.o
 
 MDIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-# Detect git
+# ------------------------------------------------------------
+# BunnySU version
+#
+# Priority:
+# 1. Use KSU_VERSION passed from build command / GitHub Actions.
+# 2. Otherwise auto calculate: 30000 + git commit count.
+#
+# This keeps Manager version and kernel/LKM driver version in sync.
+# ------------------------------------------------------------
+
 GIT := $(shell PATH="$$PATH":/usr/bin:/usr/local/bin which git)
+
+ifndef KSU_VERSION
 
 ifneq ($(GIT),)
 GIT_ROOT := $(shell cd $(MDIR) && $(GIT) rev-parse --show-toplevel 2>/dev/null)
 
 ifneq ($(GIT_ROOT),)
 $(shell cd $(GIT_ROOT) && [ -f .git/shallow ] && $(GIT) fetch --unshallow 2>/dev/null || true)
-
 KSU_GIT_VERSION := $(shell cd $(GIT_ROOT) && $(GIT) rev-list --count HEAD 2>/dev/null)
+endif
+endif
 
 ifneq ($(KSU_GIT_VERSION),)
-KSU_GIT_VERSION_VALID := 1
-$(info -- BunnySU: Git repo detected at $(GIT_ROOT))
-endif
-endif
-
-else
-$(warning -- BunnySU: Git not detected, make sure git is installed in your PATH!)
-endif
-
-# Auto calculate BunnySU kernel/LKM version.
-# Manager versionCode = 30000 + git commit count.
-ifdef KSU_GIT_VERSION_VALID
 KSU_VERSION := $(shell expr 30000 + $(KSU_GIT_VERSION))
-$(info -- BunnySU git version: $(KSU_GIT_VERSION))
+else
+KSU_VERSION := 30000
+$(warning -- BunnySU: Cannot detect git commit count. Fallback KSU_VERSION=$(KSU_VERSION))
+endif
+
+endif
+
 $(info -- BunnySU version: $(KSU_VERSION))
 ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
-else
-$(warning -- BunnySU: KSU_GIT_VERSION not defined! Fallback version is used.)
-ccflags-y += -DKSU_VERSION=32493
-endif
+
+# ------------------------------------------------------------
+# BunnySU dcache flush detection
+# ------------------------------------------------------------
 
 KSU_NEW_DCACHE_FLUSH := $(shell grep -q __flush_dcache_area $(srctree)/arch/arm64/include/asm/cacheflush.h ; echo $$?)
 $(info -- KSU_NEW_DCACHE_FLUSH: $(KSU_NEW_DCACHE_FLUSH))
+
+# ------------------------------------------------------------
+# BunnySU Manager signature
+#
+# IMPORTANT:
+# The default values below are PR/test signature values.
+# If you keep them, Manager may still show PR signature warning.
+#
+# To remove PR signature warning, replace these with the real
+# signature size/hash of your own signed BunnySU Manager APK,
+# or pass them from build command:
+#
+# make KSU_EXPECTED_SIZE=0x.... KSU_EXPECTED_HASH=....
+# ------------------------------------------------------------
 
 ifndef KSU_EXPECTED_SIZE
 KSU_EXPECTED_SIZE := 0x033b
