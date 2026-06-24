@@ -35,7 +35,7 @@ fun SettingPager(
         onSetDefaultUmountModules = viewModel::setDefaultUmountModules,
         onSetEnableWebDebugging = viewModel::setEnableWebDebugging,
         onSetAutoJailbreak = viewModel::setAutoJailbreak,
-        onSetUiModeIndex = viewModel::setUiMode, // ĐÃ THÊM DÒNG NÀY
+        onSetUiModeIndex = { index -> viewModel.setUiMode(index.toString()) },
         onOpenAbout = { navigator.push(Route.About) },
     )
 
