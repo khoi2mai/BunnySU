@@ -1,7 +1,10 @@
 package com.bunny.su.ui.screen.home
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -46,13 +49,9 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -72,7 +71,6 @@ import com.bunny.su.ui.component.dialog.rememberConfirmDialog
 import com.bunny.su.ui.component.material.TonalCard
 import com.bunny.su.ui.component.rebootlistpopup.RebootListPopup
 import com.bunny.su.ui.component.statustag.StatusTag
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,69 +182,31 @@ private fun UpdateCard(
 private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
-    // Để 1 sẵn, LaunchedEffect sẽ chạy ngay khi TopBar được tạo
-    val logoAnimKey = remember { mutableIntStateOf(1) }
+    val infiniteTransition = rememberInfiniteTransition()
 
-    val logoRotation = remember { Animatable(0f) }
-    val logoScale = remember { Animatable(1f) }
+    val logoScale = infiniteTransition.animateFloat(
+        initialValue = 1.00f,
+        targetValue = 1.18f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 750),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
 
-    LaunchedEffect(logoAnimKey.intValue) {
-        logoRotation.stop()
-        logoScale.stop()
-
-        logoRotation.snapTo(0f)
-        logoScale.snapTo(1f)
-
-        // Bunny Ear Twitch / Head Wiggle
-        // Tăng góc lắc để nhìn rõ hơn khi vừa mở Home/app
-        launch {
-            logoRotation.animateTo(
-                targetValue = -14f,
-                animationSpec = tween(durationMillis = 90)
-            )
-            logoRotation.animateTo(
-                targetValue = 11f,
-                animationSpec = tween(durationMillis = 95)
-            )
-            logoRotation.animateTo(
-                targetValue = -7f,
-                animationSpec = tween(durationMillis = 90)
-            )
-            logoRotation.animateTo(
-                targetValue = 4f,
-                animationSpec = tween(durationMillis = 90)
-            )
-            logoRotation.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(durationMillis = 130)
-            )
-        }
-
-        // Scale nhẹ để logo có cảm giác phản ứng, không bị nhảy lên xuống
-        launch {
-            logoScale.animateTo(
-                targetValue = 1.11f,
-                animationSpec = tween(durationMillis = 120)
-            )
-            logoScale.animateTo(
-                targetValue = 0.98f,
-                animationSpec = tween(durationMillis = 120)
-            )
-            logoScale.animateTo(
-                targetValue = 1.00f,
-                animationSpec = tween(durationMillis = 220)
-            )
-        }
-    }
+    val logoAlpha = infiniteTransition.animateFloat(
+        initialValue = 0.82f,
+        targetValue = 1.00f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 750),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
 
     TopAppBar(
         modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
         title = {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable {
-                    logoAnimKey.intValue++
-                }
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_bunny_su),
@@ -254,13 +214,9 @@ private fun TopBar(
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .graphicsLayer {
-                            rotationZ = logoRotation.value
                             scaleX = logoScale.value
                             scaleY = logoScale.value
-
-                            // Xoay quanh gần phần dưới đầu thỏ
-                            // nhìn giống nghiêng đầu/twitch tai hơn là xoay cả icon
-                            transformOrigin = TransformOrigin(0.5f, 0.72f)
+                            alpha = logoAlpha.value
                         }
                 )
 
