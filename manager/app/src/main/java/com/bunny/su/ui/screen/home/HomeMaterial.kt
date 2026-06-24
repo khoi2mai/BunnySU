@@ -1,12 +1,12 @@
 package com.bunny.su.ui.screen.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -157,7 +157,10 @@ private fun UpdateCard(
         enter = fadeIn() + expandVertically(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        val updateDialog = rememberConfirmDialog(onConfirm = { actions.onOpenUrl(newVersion.downloadUrl) })
+        val updateDialog = rememberConfirmDialog(
+            onConfirm = { actions.onOpenUrl(newVersion.downloadUrl) }
+        )
+
         WarningCard(
             message = stringResource(id = R.string.new_version_available, newVersion.versionCode),
             color = MaterialTheme.colorScheme.outlineVariant
@@ -181,41 +184,57 @@ private fun UpdateCard(
 private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
-    var logoAnimKey = remember { mutableIntStateOf(0) }
+    // Để 1 sẵn, LaunchedEffect sẽ chạy ngay khi TopBar được tạo
+    val logoAnimKey = remember { mutableIntStateOf(1) }
 
     val logoRotation = remember { Animatable(0f) }
     val logoScale = remember { Animatable(1f) }
 
     LaunchedEffect(logoAnimKey.intValue) {
+        logoRotation.stop()
+        logoScale.stop()
+
+        logoRotation.snapTo(0f)
+        logoScale.snapTo(1f)
+
+        // Bunny Ear Twitch / Head Wiggle
+        // Tăng góc lắc để nhìn rõ hơn khi vừa mở Home/app
         launch {
-            logoRotation.snapTo(0f)
+            logoRotation.animateTo(
+                targetValue = -14f,
+                animationSpec = tween(durationMillis = 90)
+            )
+            logoRotation.animateTo(
+                targetValue = 11f,
+                animationSpec = tween(durationMillis = 95)
+            )
+            logoRotation.animateTo(
+                targetValue = -7f,
+                animationSpec = tween(durationMillis = 90)
+            )
+            logoRotation.animateTo(
+                targetValue = 4f,
+                animationSpec = tween(durationMillis = 90)
+            )
             logoRotation.animateTo(
                 targetValue = 0f,
-                animationSpec = keyframes {
-                    durationMillis = 560
-
-                    0f at 0
-                    -8f at 80
-                    7f at 165
-                    -4.5f at 270
-                    2.5f at 395
-                    0f at 560
-                }
+                animationSpec = tween(durationMillis = 130)
             )
         }
 
+        // Scale nhẹ để logo có cảm giác phản ứng, không bị nhảy lên xuống
         launch {
-            logoScale.snapTo(1f)
             logoScale.animateTo(
-                targetValue = 1f,
-                animationSpec = keyframes {
-                    durationMillis = 560
-
-                    1.00f at 0
-                    1.045f at 120
-                    0.99f at 280
-                    1.00f at 560
-                }
+                targetValue = 1.11f,
+                animationSpec = tween(durationMillis = 120)
+            )
+            logoScale.animateTo(
+                targetValue = 0.98f,
+                animationSpec = tween(durationMillis = 120)
+            )
+            logoScale.animateTo(
+                targetValue = 1.00f,
+                animationSpec = tween(durationMillis = 220)
             )
         }
     }
@@ -239,10 +258,12 @@ private fun TopBar(
                             scaleX = logoScale.value
                             scaleY = logoScale.value
 
-                            // Xoay quanh gần phần dưới đầu thỏ để nhìn giống nghiêng đầu hơn
+                            // Xoay quanh gần phần dưới đầu thỏ
+                            // nhìn giống nghiêng đầu/twitch tai hơn là xoay cả icon
                             transformOrigin = TransformOrigin(0.5f, 0.72f)
                         }
                 )
+
                 Text(
                     text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.titleLarge,
@@ -255,7 +276,9 @@ private fun TopBar(
             containerColor = MaterialTheme.colorScheme.surface,
             scrolledContainerColor = MaterialTheme.colorScheme.surface
         ),
-        windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+        windowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+        ),
         scrollBehavior = scrollBehavior
     )
 }
@@ -301,6 +324,7 @@ private fun StatusCard(
                             contentDescription = stringResource(R.string.home_working),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
+
                         Column(Modifier.padding(start = 20.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
@@ -309,6 +333,7 @@ private fun StatusCard(
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onPrimary
                                 )
+
                                 if (workingMode.isNotEmpty()) {
                                     Spacer(Modifier.width(8.dp))
                                     StatusTag(
@@ -317,6 +342,7 @@ private fun StatusCard(
                                         backgroundColor = MaterialTheme.colorScheme.onPrimary
                                     )
                                 }
+
                                 if (state.isSafeMode) {
                                     Spacer(Modifier.width(8.dp))
                                     StatusTag(
@@ -325,6 +351,7 @@ private fun StatusCard(
                                         backgroundColor = MaterialTheme.colorScheme.onErrorContainer
                                     )
                                 }
+
                                 if (state.isLateLoadMode) {
                                     Spacer(Modifier.width(8.dp))
                                     StatusTag(
@@ -334,7 +361,9 @@ private fun StatusCard(
                                     )
                                 }
                             }
+
                             Spacer(Modifier.height(4.dp))
+
                             Text(
                                 text = stringResource(R.string.home_working_version, state.ksuVersion),
                                 style = MaterialTheme.typography.bodySmall,
@@ -349,6 +378,7 @@ private fun StatusCard(
                             contentDescription = stringResource(R.string.home_not_installed),
                             tint = MaterialTheme.colorScheme.onSecondaryContainer
                         )
+
                         Column(
                             modifier = Modifier
                                 .padding(start = 20.dp)
@@ -359,13 +389,16 @@ private fun StatusCard(
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
+
                             Spacer(Modifier.height(4.dp))
+
                             Text(
                                 text = stringResource(R.string.home_click_to_install),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
+
                         if (state.isSELinuxPermissive) {
                             Button(
                                 onClick = actions.onJailbreakClick,
@@ -385,13 +418,16 @@ private fun StatusCard(
                             contentDescription = stringResource(R.string.home_unsupported),
                             tint = MaterialTheme.colorScheme.onErrorContainer
                         )
+
                         Column(Modifier.padding(start = 20.dp)) {
                             Text(
                                 text = stringResource(R.string.home_unsupported),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
+
                             Spacer(Modifier.height(4.dp))
+
                             Text(
                                 text = stringResource(R.string.home_unsupported_reason),
                                 style = MaterialTheme.typography.bodyMedium,
@@ -423,7 +459,9 @@ private fun StatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+
                         Spacer(Modifier.height(4.dp))
+
                         Text(
                             text = state.superuserCount.toString(),
                             style = MaterialTheme.typography.bodyMedium,
@@ -431,6 +469,7 @@ private fun StatusCard(
                         )
                     }
                 }
+
                 TonalCard(
                     modifier = Modifier.weight(1f),
                     onClick = actions.onModuleClick
@@ -446,7 +485,9 @@ private fun StatusCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+
                         Spacer(Modifier.height(4.dp))
+
                         Text(
                             text = state.moduleCount.toString(),
                             style = MaterialTheme.typography.bodyMedium,
@@ -482,8 +523,10 @@ private fun WarningCard(
                 contentDescription = null,
                 modifier = Modifier.padding(end = 20.dp)
             )
+
             Text(
-                text = message, style = MaterialTheme.typography.bodyMedium
+                text = message,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
@@ -492,15 +535,18 @@ private fun WarningCard(
 @Composable
 private fun LearnMoreCard(onOpenUrl: (String) -> Unit) {
     val url = stringResource(R.string.home_learn_kernelsu_url)
-    TonalCard(onClick = { 
-        try {
-            if (url.isNotBlank()) {
-                onOpenUrl(url)
+
+    TonalCard(
+        onClick = {
+            try {
+                if (url.isNotBlank()) {
+                    onOpenUrl(url)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
-    }) {
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -509,11 +555,13 @@ private fun LearnMoreCard(onOpenUrl: (String) -> Unit) {
         ) {
             Column {
                 Text(
-                    text = stringResource(R.string.home_learn_kernelsu), 
+                    text = stringResource(R.string.home_learn_kernelsu),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold
                 )
+
                 Spacer(Modifier.height(4.dp))
+
                 Text(
                     text = stringResource(R.string.home_click_to_learn_kernelsu),
                     style = MaterialTheme.typography.bodyMedium,
@@ -542,6 +590,7 @@ private fun InfoCard(systemInfo: SystemInfo) {
                                 contentDescription = null,
                                 modifier = Modifier.padding(end = 20.dp)
                             )
+
                             is Painter -> Icon(
                                 painter = icon,
                                 contentDescription = null,
@@ -549,12 +598,14 @@ private fun InfoCard(systemInfo: SystemInfo) {
                             )
                         }
                     }
+
                     Column {
                         Text(
                             text = label,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold
                         )
+
                         Text(
                             text = content,
                             style = MaterialTheme.typography.bodyMedium,
@@ -572,31 +623,40 @@ private fun InfoCard(systemInfo: SystemInfo) {
                 content = systemInfo.managerVersion,
                 icon = Icons.Filled.AutoAwesomeMotion
             )
+
             Spacer(Modifier.height(16.dp))
+
             InfoCardItem(
                 label = stringResource(R.string.home_kernel),
                 content = systemInfo.kernelVersion,
                 icon = painterResource(R.drawable.ic_linux)
             )
+
             Spacer(Modifier.height(16.dp))
+
             InfoCardItem(
                 label = stringResource(R.string.home_fingerprint),
                 content = systemInfo.fingerprint,
                 icon = Icons.Filled.Fingerprint
             )
+
             Spacer(Modifier.height(16.dp))
+
             val selinuxDisplay = when (systemInfo.selinuxStatus) {
                 "Enforcing" -> stringResource(R.string.selinux_status_enforcing)
                 "Permissive" -> stringResource(R.string.selinux_status_permissive)
                 "Disabled" -> stringResource(R.string.selinux_status_disabled)
                 else -> stringResource(R.string.selinux_status_unknown)
             }
+
             InfoCardItem(
                 label = stringResource(R.string.home_selinux_status),
                 content = selinuxDisplay,
                 icon = Icons.Filled.Security
             )
+
             Spacer(Modifier.height(16.dp))
+
             val seccompDisplay = when (systemInfo.seccompStatus) {
                 -1 -> stringResource(R.string.seccomp_status_not_supported)
                 0 -> stringResource(R.string.seccomp_status_disabled)
@@ -604,6 +664,7 @@ private fun InfoCard(systemInfo: SystemInfo) {
                 2 -> stringResource(R.string.seccomp_status_filter)
                 else -> stringResource(R.string.seccomp_status_unknown)
             }
+
             InfoCardItem(
                 label = stringResource(R.string.home_seccomp_status),
                 content = seccompDisplay,
@@ -617,7 +678,12 @@ private fun InfoCard(systemInfo: SystemInfo) {
 @Composable
 private fun StatusCardActivatedPreview() {
     StatusCard(
-        state = previewHomeScreenState(ksuVersion = 12345, lkmMode = true, superuserCount = 5, moduleCount = 10),
+        state = previewHomeScreenState(
+            ksuVersion = 12345,
+            lkmMode = true,
+            superuserCount = 5,
+            moduleCount = 10
+        ),
         actions = HomeActions({}, {}, {}, {})
     )
 }
@@ -625,14 +691,24 @@ private fun StatusCardActivatedPreview() {
 @Preview(name = "Not Activated")
 @Composable
 private fun StatusCardNotActivatedPreview() {
-    StatusCard(state = previewHomeScreenState(ksuVersion = null, lkmMode = null), actions = HomeActions({}, {}, {}, {}))
+    StatusCard(
+        state = previewHomeScreenState(
+            ksuVersion = null,
+            lkmMode = null
+        ),
+        actions = HomeActions({}, {}, {}, {})
+    )
 }
 
 @Preview(name = "Permissive")
 @Composable
 private fun StatusCardPermissivePreview() {
     StatusCard(
-        state = previewHomeScreenState(ksuVersion = null, lkmMode = null, selinuxStatus = "Permissive"),
+        state = previewHomeScreenState(
+            ksuVersion = null,
+            lkmMode = null,
+            selinuxStatus = "Permissive"
+        ),
         actions = HomeActions({}, {}, {}, {})
     )
 }
@@ -641,7 +717,13 @@ private fun StatusCardPermissivePreview() {
 @Composable
 private fun StatusCardJailbreakPreview() {
     StatusCard(
-        state = previewHomeScreenState(ksuVersion = 12345, lkmMode = true, isLateLoadMode = true, superuserCount = 5, moduleCount = 10),
+        state = previewHomeScreenState(
+            ksuVersion = 12345,
+            lkmMode = true,
+            isLateLoadMode = true,
+            superuserCount = 5,
+            moduleCount = 10
+        ),
         actions = HomeActions({}, {}, {}, {})
     )
 }
@@ -674,6 +756,7 @@ private fun HomeScreenPreviewContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             val actions = HomeActions({}, {}, {}, {})
+
             StatusCard(
                 state = previewHomeScreenState(
                     ksuVersion = ksuVersion,
@@ -686,6 +769,7 @@ private fun HomeScreenPreviewContent(
                 ),
                 actions = actions
             )
+
             InfoCard(previewSystemInfo.copy(selinuxStatus = selinuxStatus))
             LearnMoreCard(onOpenUrl = {})
         }
@@ -695,25 +779,43 @@ private fun HomeScreenPreviewContent(
 @Preview(name = "Home Activated", showBackground = true)
 @Composable
 private fun HomeScreenActivatedPreview() {
-    HomeScreenPreviewContent(ksuVersion = 12345, lkmMode = true, superuserCount = 5, moduleCount = 10)
+    HomeScreenPreviewContent(
+        ksuVersion = 12345,
+        lkmMode = true,
+        superuserCount = 5,
+        moduleCount = 10
+    )
 }
 
 @Preview(name = "Home Not Activated", showBackground = true)
 @Composable
 private fun HomeScreenNotActivatedPreview() {
-    HomeScreenPreviewContent(ksuVersion = null, lkmMode = null)
+    HomeScreenPreviewContent(
+        ksuVersion = null,
+        lkmMode = null
+    )
 }
 
 @Preview(name = "Home Permissive", showBackground = true)
 @Composable
 private fun HomeScreenPermissivePreview() {
-    HomeScreenPreviewContent(ksuVersion = null, lkmMode = null, selinuxStatus = "Permissive")
+    HomeScreenPreviewContent(
+        ksuVersion = null,
+        lkmMode = null,
+        selinuxStatus = "Permissive"
+    )
 }
 
 @Preview(name = "Home Jailbreak", showBackground = true)
 @Composable
 private fun HomeScreenJailbreakPreview() {
-    HomeScreenPreviewContent(ksuVersion = 12345, lkmMode = true, isLateLoadMode = true, superuserCount = 5, moduleCount = 10)
+    HomeScreenPreviewContent(
+        ksuVersion = 12345,
+        lkmMode = true,
+        isLateLoadMode = true,
+        superuserCount = 5,
+        moduleCount = 10
+    )
 }
 
 private fun previewHomeScreenState(
