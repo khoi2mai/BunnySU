@@ -6,6 +6,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -28,20 +29,37 @@ fun ChooseKmiDialogMaterial(
 ) {
     if (!show) return
 
-    val supportedKMIs by produceState(initialValue = emptyList()) {
+    val supportedKMIs by produceState<List<String>?>(initialValue = null) {
         value = getSupportedKmis()
     }
 
-    val currentKmi by produceState(initialValue = "") {
+    val currentKmi by produceState<String?>(initialValue = null) {
         value = getCurrentKmi()
     }
 
-    val selectedKmi = remember(currentKmi) { mutableStateOf(currentKmi) }
+    val kmis = supportedKMIs
+    val deviceKmi = currentKmi
+
+    if (kmis == null || deviceKmi == null) return
+
+    if (deviceKmi.isNotBlank() && kmis.contains(deviceKmi)) {
+        LaunchedEffect(deviceKmi, kmis) {
+            onSelected(deviceKmi)
+            onDismissRequest()
+        }
+        return
+    }
+
+    val selectedKmi = remember(deviceKmi) {
+        mutableStateOf(
+            if (deviceKmi.isNotBlank()) deviceKmi else ""
+        )
+    }
 
     AlertDialog(
         onDismissRequest = {
             onDismissRequest()
-            selectedKmi.value = currentKmi
+            selectedKmi.value = deviceKmi
         },
         confirmButton = {
             TextButton(
@@ -49,16 +67,18 @@ fun ChooseKmiDialogMaterial(
                     onSelected(selectedKmi.value)
                     onDismissRequest()
                 },
-                enabled = supportedKMIs.contains(selectedKmi.value)
+                enabled = kmis.contains(selectedKmi.value)
             ) {
                 Text(stringResource(id = R.string.confirm))
             }
         },
         dismissButton = {
-            TextButton(onClick = {
-                onDismissRequest()
-                selectedKmi.value = currentKmi
-            }) {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                    selectedKmi.value = deviceKmi
+                }
+            ) {
                 Text(stringResource(id = android.R.string.cancel))
             }
         },
@@ -73,13 +93,19 @@ fun ChooseKmiDialogMaterial(
         },
         text = {
             SegmentedColumn(
-                content = supportedKMIs.map { kmi ->
+                content = kmis.map { kmi ->
                     {
                         SegmentedRadioItem(
                             title = kmi,
-                            summary = if (kmi == currentKmi) stringResource(R.string.current_device_kmi) else null,
+                            summary = if (kmi == deviceKmi) {
+                                stringResource(R.string.current_device_kmi)
+                            } else {
+                                null
+                            },
                             selected = selectedKmi.value == kmi,
-                            onClick = { selectedKmi.value = kmi }
+                            onClick = {
+                                selectedKmi.value = kmi
+                            }
                         )
                     }
                 }

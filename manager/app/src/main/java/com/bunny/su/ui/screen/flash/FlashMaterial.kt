@@ -33,14 +33,20 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.bunny.su.R
 import com.bunny.su.ui.component.KeyEventBlocker
+
+private val FlashingColor = Color(0xFFFFA000)
+private val SuccessColor = Color(0xFF4CAF50)
+private val FailedColor = Color(0xFFE53935)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +55,7 @@ fun FlashScreenMaterial(
     actions: FlashScreenActions,
 ) {
     val scrollState = rememberScrollState()
+
     if (state.showJailbreakWarning) {
         JailbreakFlashWarningDialog(
             onConfirm = actions.onConfirmJailbreakWarning,
@@ -61,22 +68,43 @@ fun FlashScreenMaterial(
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(
+                        text = stringResource(
                             when (state.flashingStatus) {
                                 FlashingStatus.FLASHING -> R.string.flashing
                                 FlashingStatus.SUCCESS -> R.string.flash_success
                                 FlashingStatus.FAILED -> R.string.flash_failed
                             }
-                        )
+                        ),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Black,
+                        color = when (state.flashingStatus) {
+                            FlashingStatus.FLASHING -> FlashingColor
+                            FlashingStatus.SUCCESS -> SuccessColor
+                            FlashingStatus.FAILED -> FailedColor
+                        }
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = actions.onBack) {
+                    IconButton(
+                        onClick = {
+                            if (state.flashingStatus != FlashingStatus.FLASHING) {
+                                actions.onBack()
+                            }
+                        },
+                        enabled = state.flashingStatus != FlashingStatus.FLASHING
+                    ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
                     }
                 },
                 actions = {
-                    IconButton(onClick = actions.onSaveLog) {
+                    IconButton(
+                        onClick = {
+                            if (state.flashingStatus != FlashingStatus.FLASHING) {
+                                actions.onSaveLog()
+                            }
+                        },
+                        enabled = state.flashingStatus != FlashingStatus.FLASHING
+                    ) {
                         Icon(Icons.Filled.Save, stringResource(R.string.save_log))
                     }
                 }
@@ -95,11 +123,14 @@ fun FlashScreenMaterial(
                 )
             }
         },
-        contentWindowInsets = WindowInsets.systemBars.add(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal)
+        contentWindowInsets = WindowInsets.systemBars
+            .add(WindowInsets.displayCutout)
+            .only(WindowInsetsSides.Horizontal)
     ) { innerPadding ->
         val layoutDirection = LocalLayoutDirection.current
         val navBars = WindowInsets.navigationBars.asPaddingValues()
         val captionBar = WindowInsets.captionBar.asPaddingValues()
+
         KeyEventBlocker {
             it.key == Key.VolumeDown || it.key == Key.VolumeUp
         }
@@ -116,13 +147,16 @@ fun FlashScreenMaterial(
             LaunchedEffect(state.text) {
                 scrollState.animateScrollTo(scrollState.maxValue)
             }
+
             Spacer(Modifier.height(innerPadding.calculateTopPadding()))
+
             Text(
                 modifier = Modifier.padding(8.dp),
                 text = state.text,
                 style = MaterialTheme.typography.bodySmall,
                 fontFamily = FontFamily.Monospace,
             )
+
             Spacer(
                 Modifier.height(
                     16.dp + 54.dp + navBars.calculateBottomPadding() + captionBar.calculateBottomPadding()

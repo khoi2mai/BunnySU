@@ -571,7 +571,7 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
         }
 
         let tmpdir = tempfile::Builder::new()
-            .prefix("KernelSU")
+            .prefix("BunnySU")
             .tempdir()
             .context("create temp dir failed")?;
         let workdir = tmpdir.path();
@@ -683,7 +683,7 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
             let is_magisk_patched = is_magisk_patched(&magiskboot, workdir, ramdisk)?;
             ensure!(!is_magisk_patched, "Cannot work with Magisk patched image");
 
-            println!("- Adding KernelSU LKM");
+            println!("- Adding BunnySU LKM");
             let is_kernelsu_patched = is_kernelsu_patched(&magiskboot, workdir, ramdisk)?;
 
             if !is_kernelsu_patched {
@@ -1003,7 +1003,7 @@ pub fn restore(args: BootRestoreArgs) -> Result<()> {
         let output_dir = out.unwrap_or(std::env::current_dir()?);
         let name = out_name.unwrap_or_else(|| {
             let now = chrono::Utc::now();
-            format!("kernelsu_restore_{}.img", now.format("%Y%m%d_%H%M%S"))
+            format!("bunnysu_restore_{}.img", now.format("%Y%m%d_%H%M%S"))
         });
         let output_image = output_dir.join(name);
 
