@@ -1,13 +1,14 @@
 package com.bunny.su.ui.theme
 
 import android.content.Context
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
+import com.bunny.su.ui.LocalUiMode
+import com.bunny.su.ui.UiMode
 
 enum class ColorMode(val value: Int) {
     SYSTEM(0),
@@ -22,8 +23,8 @@ enum class ColorMode(val value: Int) {
         fun fromValue(value: Int) = entries.find { it.value == value } ?: SYSTEM
     }
 
-    val isSystem: Boolean get() = value == 0 || value == 3
-    val isDark: Boolean get() = value == 2 || value == 5 || value == 6
+    val isSystem: Boolean get() = false
+    val isDark: Boolean get() = true
     val isAmoled: Boolean get() = value == 6
     val isMonet: Boolean get() = value >= 3
 
@@ -52,9 +53,9 @@ data class AppSettings(
 object ThemeController {
     fun getAppSettings(context: Context): AppSettings {
         val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val colorModeValue = prefs.getInt("color_mode", ColorMode.SYSTEM.value)
 
-        val colorMode = ColorMode.fromValue(colorModeValue)
+        val colorMode = ColorMode.DARK
+
         val keyColor = prefs.getInt("key_color", 0)
         val paletteStyleStr = prefs.getString("color_style", PaletteStyle.TonalSpot.name)
         val paletteStyle = try {
@@ -76,6 +77,7 @@ object ThemeController {
 @Composable
 fun KernelSUTheme(
     appSettings: AppSettings? = null,
+    uiMode: UiMode = LocalUiMode.current,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -90,14 +92,11 @@ fun KernelSUTheme(
 @Composable
 @ReadOnlyComposable
 fun isInDarkTheme(): Boolean {
-    return when (LocalColorMode.current) {
-        1, 4 -> false  // Force light mode
-        2, 5, 6 -> true   // Force dark mode
-        else -> isSystemInDarkTheme()  // Follow system (0 or default)
-    }
+
+    return true
 }
 
-val LocalColorMode = staticCompositionLocalOf { 0 }
+val LocalColorMode = staticCompositionLocalOf { 2 }
 
 val LocalEnableBlur = staticCompositionLocalOf { false }
 
