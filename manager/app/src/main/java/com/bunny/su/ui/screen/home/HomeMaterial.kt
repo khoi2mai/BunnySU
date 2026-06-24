@@ -77,7 +77,9 @@ fun HomePagerMaterial(
 
     Scaffold(
         topBar = { TopBar(scrollBehavior = scrollBehavior) },
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+        contentWindowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+        )
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -91,38 +93,43 @@ fun HomePagerMaterial(
                 state = state,
                 actions = actions,
             )
-            if (state.showManagerPrBuildWarning) {
-                WarningCard(stringResource(id = R.string.home_pr_build_warning))
-            } else if (state.showKernelPrBuildWarning) {
-                WarningCard(stringResource(id = R.string.home_pr_kernel_warning))
-            }
+
             if (state.showVersionMismatchWarning) {
                 WarningCard(
-                    stringResource(id = R.string.home_version_mismatch,
+                    stringResource(
+                        id = R.string.home_version_mismatch,
                         state.currentManagerVersionCode,
                         state.ksuVersion ?: 0
                     )
                 )
             }
+
             if (state.showGkiWarning) {
                 WarningCard(stringResource(id = R.string.home_gki_warning))
             }
+
             if (state.showRequireKernelWarning) {
                 WarningCard(
-                    stringResource(id = R.string.require_kernel_version,
+                    stringResource(
+                        id = R.string.require_kernel_version,
                         state.ksuVersion ?: 0,
                         com.bunny.su.Natives.MINIMAL_SUPPORTED_KERNEL
                     )
                 )
             }
+
             if (state.showRootWarning) {
                 WarningCard(stringResource(id = R.string.grant_root_failed))
             }
+
             if (state.checkUpdateEnabled) {
                 UpdateCard(state = state, actions = actions)
             }
+
             InfoCard(systemInfo = state.systemInfo)
+
             LearnMoreCard(onOpenUrl = actions.onOpenUrl)
+
             Spacer(Modifier.height(bottomInnerPadding))
         }
     }
