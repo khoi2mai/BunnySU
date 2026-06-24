@@ -2,11 +2,12 @@ name: Build Manager
 
 on:
   push:
-    branches: [ "main", "dev", "ci" ]
+    branches: [ "main", "dev", "ci", "bunnysu-v3.2.4" ]
     paths:
       - '.github/workflows/build-manager.yml'
       - '.github/workflows/build-lkm.yml'
       - '.github/workflows/ddk-lkm.yml'
+      - '.github/workflows/ksuinit.yml'
       - '.github/workflows/ksud.yml'
       - '.github/workflows/ksud-extra.yml'
       - '.github/scripts/setup-rust-build.sh'
@@ -14,12 +15,14 @@ on:
       - 'manager/**'
       - 'kernel/**'
       - 'userspace/**'
+
   pull_request:
-    branches: [ "main", "dev" ]
+    branches: [ "main", "dev", "bunnysu-v3.2.4" ]
     paths:
       - '.github/workflows/build-manager.yml'
       - '.github/workflows/build-lkm.yml'
       - '.github/workflows/ddk-lkm.yml'
+      - '.github/workflows/ksuinit.yml'
       - '.github/workflows/ksud.yml'
       - '.github/workflows/ksud-extra.yml'
       - '.github/scripts/setup-rust-build.sh'
@@ -27,6 +30,7 @@ on:
       - 'manager/**'
       - 'kernel/**'
       - 'userspace/**'
+
   workflow_call:
   workflow_dispatch:
 
@@ -39,48 +43,46 @@ jobs:
       keystore: ${{ steps.gen.outputs.keystore }}
       keystore_password: ${{ steps.gen.outputs.keystore_password }}
       key_password: ${{ steps.gen.outputs.key_password }}
+
     steps:
       - name: Generate temporary keystore
-        if: github.event_name == 'pull_request'
         id: gen
         run: |
           KEYSTORE_PASSWORD=$(openssl rand -hex 32)
           KEY_PASSWORD=$(openssl rand -hex 32)
+
           echo "keystore_password=$KEYSTORE_PASSWORD" >> $GITHUB_OUTPUT
           echo "key_password=$KEY_PASSWORD" >> $GITHUB_OUTPUT
 
           keytool -genkeypair \
-            -alias pr-key \
-            -keyalg RSA -keysize 2048 \
-            -validity 1 \
+            -alias ci-key \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 3650 \
             -storepass "$KEYSTORE_PASSWORD" \
             -keypass "$KEY_PASSWORD" \
-            -dname "CN=KernelSU PR Build" \
+            -dname "CN=BunnySU CI Build" \
             -storetype JKS \
-            -keystore pr-key.jks
+            -keystore ci-key.jks
 
-          echo "keystore=$(base64 -w 0 pr-key.jks)" >> $GITHUB_OUTPUT
+          echo "keystore=$(base64 -w 0 ci-key.jks)" >> $GITHUB_OUTPUT
 
       - name: Extract certificate hash and size
-        if: github.event_name == 'pull_request'
         id: extract
         env:
           STORE_PASS: ${{ steps.gen.outputs.keystore_password }}
         run: |
-          # Export DER certificate
           keytool -exportcert \
-            -alias pr-key \
-            -keystore pr-key.jks \
+            -alias ci-key \
+            -keystore ci-key.jks \
             -storepass "$STORE_PASS" \
-            -file pr-cert.der
+            -file ci-cert.der
 
-          # Calculate size in hex
-          SIZE_DEC=$(stat -c%s pr-cert.der)
+          SIZE_DEC=$(stat -c%s ci-cert.der)
           SIZE_HEX=$(printf '0x%04x' "$SIZE_DEC")
-          echo "expected_size=$SIZE_HEX" >> $GITHUB_OUTPUT
+          HASH=$(sha256sum ci-cert.der | awk '{print $1}')
 
-          # Calculate SHA256 hash
-          HASH=$(sha256sum pr-cert.der | awk '{print $1}')
+          echo "expected_size=$SIZE_HEX" >> $GITHUB_OUTPUT
           echo "expected_hash=$HASH" >> $GITHUB_OUTPUT
 
           echo "Certificate size: $SIZE_HEX ($SIZE_DEC bytes)"
@@ -98,7 +100,7 @@ jobs:
     uses: ./.github/workflows/ksuinit.yml
 
   build-ksud:
-    needs: [build-lkm, build-ksuinit]
+    needs: [ build-lkm, build-ksuinit ]
     strategy:
       matrix:
         include:
@@ -109,21 +111,21 @@ jobs:
       target: ${{ matrix.target }}
       pack_lkm: true
       pack_ksuinit: true
-  
+
   build-ksud-extra:
-    needs: [build-lkm, build-ksuinit]
+    needs: [ build-lkm, build-ksuinit ]
     strategy:
       matrix:
         include:
-          - target: x86_64-pc-windows-gnu # windows pc
+          - target: x86_64-pc-windows-gnu
             os: ubuntu-latest
-          - target: x86_64-apple-darwin # Intel mac
+          - target: x86_64-apple-darwin
             os: macos-latest
-          - target: aarch64-apple-darwin # M chip mac
+          - target: aarch64-apple-darwin
             os: macos-latest
-          - target: aarch64-unknown-linux-musl # arm64 Linux
+          - target: aarch64-unknown-linux-musl
             os: ubuntu-latest
-          - target: x86_64-unknown-linux-musl # x86 Linux
+          - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
     uses: ./.github/workflows/ksud-extra.yml
     with:
@@ -133,55 +135,59 @@ jobs:
       pack_ksuinit: true
 
   build-manager:
-    needs: [generate-key]
+    needs: [ generate-key ]
     if: always() && needs.generate-key.result == 'success'
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: ./manager
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Write key
+      - name: Write signing key
+        env:
+          CI_KEYSTORE: ${{ needs.generate-key.outputs.keystore }}
+          CI_KEYSTORE_PASSWORD: ${{ needs.generate-key.outputs.keystore_password }}
+          CI_KEY_PASSWORD: ${{ needs.generate-key.outputs.key_password }}
+          PROD_KEYSTORE: ${{ secrets.KEYSTORE }}
+          PROD_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          PROD_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          PROD_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          if [ ! -z "${{ secrets.KEYSTORE }}" ]; then
+          if [ -n "$PROD_KEYSTORE" ]; then
+            echo "$PROD_KEYSTORE" | base64 -d > key.jks
             {
-              echo KEYSTORE_PASSWORD='${{ secrets.KEYSTORE_PASSWORD }}'
-              echo KEY_ALIAS='${{ secrets.KEY_ALIAS }}'
-              echo KEY_PASSWORD='${{ secrets.KEY_PASSWORD }}'
+              echo KEYSTORE_PASSWORD="$PROD_KEYSTORE_PASSWORD"
+              echo KEY_ALIAS="$PROD_KEY_ALIAS"
+              echo KEY_PASSWORD="$PROD_KEY_PASSWORD"
               echo KEYSTORE_FILE='key.jks'
             } >> gradle.properties
-            echo ${{ secrets.KEYSTORE }} | base64 -d > key.jks
+          else
+            echo "$CI_KEYSTORE" | base64 -d > ci-key.jks
+            {
+              echo KEYSTORE_PASSWORD="$CI_KEYSTORE_PASSWORD"
+              echo KEY_ALIAS='ci-key'
+              echo KEY_PASSWORD="$CI_KEY_PASSWORD"
+              echo KEYSTORE_FILE='ci-key.jks'
+            } >> gradle.properties
           fi
 
-      - name: Write PR key
-        if: github.event_name == 'pull_request'
-        env:
-          PR_KEYSTORE: ${{ needs.generate-key.outputs.keystore }}
-          PR_KEYSTORE_PASSWORD: ${{ needs.generate-key.outputs.keystore_password }}
-          PR_KEY_PASSWORD: ${{ needs.generate-key.outputs.key_password }}
-        run: |
-          echo "$PR_KEYSTORE" | base64 -d > pr-key.jks
-          {
-            echo KEYSTORE_PASSWORD="$PR_KEYSTORE_PASSWORD"
-            echo KEY_ALIAS='pr-key'
-            echo KEY_PASSWORD="$PR_KEY_PASSWORD"
-            echo KEYSTORE_FILE='pr-key.jks'
-          } >> gradle.properties
-
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Build with Gradle
         run: |
@@ -191,7 +197,7 @@ jobs:
             ./gradlew clean assembleRelease
           fi
 
-      - name: Upload build artifact
+      - name: Upload manager gradle artifact
         uses: actions/upload-artifact@v4
         with:
           name: manager-gradle
@@ -200,32 +206,33 @@ jobs:
 
       - name: Upload mappings
         uses: actions/upload-artifact@v4
+        if: ${{ hashFiles('manager/app/build/outputs/mapping/release/**') != '' }}
         with:
-          name: "mappings"
-          path: "manager/app/build/outputs/mapping/release/"
+          name: mappings
+          path: manager/app/build/outputs/mapping/release/
 
   repack-manager:
-    needs: [build-manager, build-ksud, generate-key]
+    needs: [ build-manager, build-ksud, generate-key ]
     if: always() && needs.build-manager.result == 'success' && needs.build-ksud.result == 'success' && needs.generate-key.result == 'success'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup need_upload
         id: need_upload
         run: |
-          if [ ! -z "${{ secrets.BOT_TOKEN }}" ]; then
+          if [ -n "${{ secrets.BOT_TOKEN }}" ]; then
             echo "UPLOAD=true" >> $GITHUB_OUTPUT
           else
             echo "UPLOAD=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Download gradle manager artifact
         uses: actions/download-artifact@v4
@@ -248,42 +255,45 @@ jobs:
       - name: Place manager apk and ksud artifacts
         run: |
           mkdir -p manager/app/build/outputs/apk/release
+
           APK=$(find artifacts/manager-gradle -type f -name "*.apk" | head -n 1)
           test -n "$APK"
           cp -f "$APK" manager/app/build/outputs/apk/release/
 
           mkdir -p target/aarch64-linux-android/release
           mkdir -p target/x86_64-linux-android/release
+
           ARM64_KSUD=$(find artifacts/ksud-aarch64-linux-android -type f -name ksud | head -n 1)
           X86_64_KSUD=$(find artifacts/ksud-x86_64-linux-android -type f -name ksud | head -n 1)
+
           test -n "$ARM64_KSUD"
           test -n "$X86_64_KSUD"
+
           cp -f "$ARM64_KSUD" target/aarch64-linux-android/release/ksud
           cp -f "$X86_64_KSUD" target/x86_64-linux-android/release/ksud
 
       - name: Prepare signing inputs
         env:
-          PR_KEYSTORE: ${{ needs.generate-key.outputs.keystore }}
-          PR_KEYSTORE_PASSWORD: ${{ needs.generate-key.outputs.keystore_password }}
-          PR_KEY_PASSWORD: ${{ needs.generate-key.outputs.key_password }}
+          CI_KEYSTORE: ${{ needs.generate-key.outputs.keystore }}
+          CI_KEYSTORE_PASSWORD: ${{ needs.generate-key.outputs.keystore_password }}
+          CI_KEY_PASSWORD: ${{ needs.generate-key.outputs.key_password }}
           PROD_KEYSTORE: ${{ secrets.KEYSTORE }}
           PROD_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           PROD_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           PROD_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "$PR_KEYSTORE" | base64 -d > pr-key.jks
-            echo "SIGN_KEYSTORE_FILE=pr-key.jks" >> $GITHUB_ENV
-            echo "SIGN_KEY_ALIAS=pr-key" >> $GITHUB_ENV
-            echo "SIGN_KEYSTORE_PASSWORD=$PR_KEYSTORE_PASSWORD" >> $GITHUB_ENV
-            echo "SIGN_KEY_PASSWORD=$PR_KEY_PASSWORD" >> $GITHUB_ENV
-          else
-            test -n "$PROD_KEYSTORE"
+          if [ -n "$PROD_KEYSTORE" ]; then
             echo "$PROD_KEYSTORE" | base64 -d > key.jks
             echo "SIGN_KEYSTORE_FILE=key.jks" >> $GITHUB_ENV
             echo "SIGN_KEY_ALIAS=$PROD_KEY_ALIAS" >> $GITHUB_ENV
             echo "SIGN_KEYSTORE_PASSWORD=$PROD_KEYSTORE_PASSWORD" >> $GITHUB_ENV
             echo "SIGN_KEY_PASSWORD=$PROD_KEY_PASSWORD" >> $GITHUB_ENV
+          else
+            echo "$CI_KEYSTORE" | base64 -d > ci-key.jks
+            echo "SIGN_KEYSTORE_FILE=ci-key.jks" >> $GITHUB_ENV
+            echo "SIGN_KEY_ALIAS=ci-key" >> $GITHUB_ENV
+            echo "SIGN_KEYSTORE_PASSWORD=$CI_KEYSTORE_PASSWORD" >> $GITHUB_ENV
+            echo "SIGN_KEY_PASSWORD=$CI_KEY_PASSWORD" >> $GITHUB_ENV
           fi
 
       - name: Repack and resign
@@ -299,16 +309,17 @@ jobs:
             -S "$SIGN_KEY_PASSWORD" \
             --strip
 
-      - name: Upload build artifact
+      - name: Upload repacked manager artifact
         uses: actions/upload-artifact@v4
         with:
           name: manager
           path: dist/*.apk
+          if-no-files-found: error
 
       - name: Bot session cache
         if: github.event_name != 'pull_request' && steps.need_upload.outputs.UPLOAD == 'true'
         id: bot_session_cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: scripts/ksubot.session
           key: ${{ runner.os }}-bot-session
@@ -325,9 +336,7 @@ jobs:
           TITLE: Manager
           BRANCH: ${{ github.ref_name }}
         run: |
-          if [ ! -z "${{ secrets.BOT_TOKEN }}" ]; then
-            export VERSION=$(git rev-list --count HEAD)
-            APK=$(find ./dist -name "*.apk")
-            pip3 install telethon
-            python3 $GITHUB_WORKSPACE/scripts/ksubot.py $APK
-          fi
+          export VERSION=$(git rev-list --count HEAD)
+          APK=$(find ./dist -name "*.apk")
+          pip3 install telethon
+          python3 $GITHUB_WORKSPACE/scripts/ksubot.py $APK
