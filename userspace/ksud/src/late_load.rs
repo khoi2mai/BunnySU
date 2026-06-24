@@ -132,7 +132,7 @@ pub fn run(package_name: &String, kmi: Option<String>) -> Result<()> {
         .args([
             "start",
             "-n",
-            &format!("{package_name}/me.weishu.kernelsu.ui.MainActivity"),
+            &format!("{package_name}/com.bunny.su.ui.MainActivity"),
         ])
         .status();
 
