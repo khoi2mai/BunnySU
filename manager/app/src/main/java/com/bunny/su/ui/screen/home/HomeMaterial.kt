@@ -186,7 +186,7 @@ private fun TopBar(
 
     val logoScale = infiniteTransition.animateFloat(
         initialValue = 1.00f,
-        targetValue = 1.18f,
+        targetValue = 1.08f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 750),
             repeatMode = RepeatMode.Reverse
