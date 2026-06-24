@@ -1,7 +1,7 @@
 ```md
 <div align="center">
 
-  <img src="https://kernelsu.org/logo.png" width="96" alt="BunnySU Logo">
+  <img src="https://kernelsu.org/logo.png" width="110" alt="BunnySU Logo">
 
   <h1>🐰 BunnySU</h1>
 
@@ -18,7 +18,7 @@
       <img src="https://img.shields.io/badge/Release-Coming%20Soon-ff69b4?logo=github" alt="Release">
     </a>
     <a href="/LICENSE">
-      <img src="https://img.shields.io/badge/License-GPL--3.0-orange?logo=gnu" alt="License">
+      <img src="https://img.shields.io/badge/License-GPL-blue?logo=gnu" alt="License">
     </a>
     <a href="https://t.me/KernelSU">
       <img src="https://img.shields.io/badge/Telegram-Community-229ED9?logo=telegram&logoColor=white" alt="Telegram">
