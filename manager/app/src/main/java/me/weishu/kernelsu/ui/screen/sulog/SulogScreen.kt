@@ -127,9 +127,10 @@ fun buildSulogFileSelector(
         )
     }
 
+    // ĐÃ SỬA DÒNG DƯỚI ĐÂY (Xóa chữ 'box')
     val selectedIndex = files.indexOfFirst { it.path == selectedFilePath }
         .takeIf { it >= 0 }
-        box ?: 0
+        ?: 0
 
     return SulogFileSelector(
         items = files.map { it.name.toSulogDisplayName() },
