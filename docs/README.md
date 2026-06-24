@@ -1,4 +1,4 @@
-# BunnySU
+#  🐰 BunnySU
 
 <p align="center">
   <img src="https://kernelsu.org/logo.png" width="96" alt="BunnySU Logo">
