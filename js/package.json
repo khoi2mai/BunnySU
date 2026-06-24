@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tiann/KernelSU.git"
+    "url": "git+https://github.com/khoi2mai/BunnySU.git"
   },
   "keywords": [
     "su",
@@ -20,7 +20,7 @@
   "author": "weishu",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/tiann/KernelSU/issues"
+    "url": "https://github.com/khoi2mai/BunnySU/issues"
   },
-  "homepage": "https://github.com/tiann/KernelSU#readme"
+  "homepage": "https://github.com/khoi2mai/BunnySU#readme"
 }

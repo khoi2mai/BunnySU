@@ -15,7 +15,7 @@ hero:
       link: /guide/what-is-kernelsu
     - theme: alt
       text: View on GitHub
-      link: https://github.com/tiann/KernelSU
+      link: https://github.com/khoi2mai/BunnySU
 
 features:
   - title: Kernel-based

@@ -15,7 +15,7 @@ hero:
       link: /zh_TW/guide/what-is-kernelsu
     - theme: alt
       text: 在 GitHub 中檢視
-      link: https://github.com/tiann/KernelSU
+      link: https://github.com/khoi2mai/BunnySU
 
 features:
   - title: 以核心為基礎
