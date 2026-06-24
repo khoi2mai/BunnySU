@@ -3,7 +3,7 @@
 # BunnySU 🐰
 
 <!-- Thay thế link ảnh dưới đây bằng đường dẫn chính xác tới logo của bạn -->
-<img src="https://raw.githubusercontent.com/khoi2mai/BunnySU/main/logo.png" width="120" alt="BunnySU Logo">
+<img src="https://kernelsu.org/logo.png" width="120" alt="BunnySU Logo">
 
 **A modern kernel-based root solution for Android devices.**
 
