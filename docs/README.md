@@ -19,20 +19,33 @@
   <img src="https://img.shields.io/badge/Telegram-Community-blue?logo=telegram&style=flat-square" alt="Telegram">
 </a>
 
-<br><br>
+<p align="center">
 
-[English](README.md) • 
-[Español](README_ES.md) • 
-[简体中文](README_CN.md) • 
-[繁體中文](README_TW.md) • 
-[日本語](README_JP.md) • 
-[한국어](README_KR.md) • 
-[Polski](README_PL.md) • 
-[Português](README_PT-BR.md) • 
-[Türkçe](README_TR.md) • 
-[Русский](README_RU.md) • 
-[Tiếng Việt](README_VI.md) • 
-[Indonesia](README_ID.md)
+  <a href="README.md">English</a> |
+
+  <a href="README_ES.md">Español</a> |
+
+  <a href="README_CN.md">简体中文</a> |
+
+  <a href="README_TW.md">繁體中文</a> |
+
+  <a href="README_JP.md">日本語</a> |
+
+  <a href="README_KR.md">한국어</a> |
+
+  <a href="README_PL.md">Polski</a> |
+
+  <a href="README_PT-BR.md">Português</a> |
+
+  <a href="README_TR.md">Türkçe</a> |
+
+  <a href="README_RU.md">Русский</a> |
+
+  <a href="README_VI.md">Tiếng Việt</a> |
+
+  <a href="README_ID.md">Indonesia</a>
+
+</p>
 
 </div>
 
