@@ -806,7 +806,7 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
             let output_dir = out.unwrap_or(std::env::current_dir()?);
             let name = out_name.unwrap_or_else(|| {
                 let now = chrono::Utc::now();
-                format!("kernelsu_patched_{}.img", now.format("%Y%m%d_%H%M%S"))
+                format!("bunnysu_patched_{}.img", now.format("%Y%m%d_%H%M%S"))
             });
             let output_image = output_dir.join(name);
             if std::fs::rename(&new_boot, &output_image).is_err() {
@@ -913,7 +913,7 @@ pub fn restore(args: BootRestoreArgs) -> Result<()> {
     }
     let ramdisk = ramdisk.as_path();
     let is_kernelsu_patched = is_kernelsu_patched(&magiskboot, workdir, ramdisk)?;
-    ensure!(is_kernelsu_patched, "boot image is not patched by KernelSU");
+    ensure!(is_kernelsu_patched, "boot image is not patched by BunnySU");
 
     #[cfg(target_os = "android")]
     let mut new_boot = None;
