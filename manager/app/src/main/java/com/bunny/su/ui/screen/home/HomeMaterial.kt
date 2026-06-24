@@ -5,6 +5,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,9 +46,14 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -65,6 +72,7 @@ import com.bunny.su.ui.component.dialog.rememberConfirmDialog
 import com.bunny.su.ui.component.material.TonalCard
 import com.bunny.su.ui.component.rebootlistpopup.RebootListPopup
 import com.bunny.su.ui.component.statustag.StatusTag
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -173,16 +181,67 @@ private fun UpdateCard(
 private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
+    var logoAnimKey = remember { mutableIntStateOf(0) }
+
+    val logoRotation = remember { Animatable(0f) }
+    val logoScale = remember { Animatable(1f) }
+
+    LaunchedEffect(logoAnimKey.intValue) {
+        launch {
+            logoRotation.snapTo(0f)
+            logoRotation.animateTo(
+                targetValue = 0f,
+                animationSpec = keyframes {
+                    durationMillis = 560
+
+                    0f at 0
+                    -8f at 80
+                    7f at 165
+                    -4.5f at 270
+                    2.5f at 395
+                    0f at 560
+                }
+            )
+        }
+
+        launch {
+            logoScale.snapTo(1f)
+            logoScale.animateTo(
+                targetValue = 1f,
+                animationSpec = keyframes {
+                    durationMillis = 560
+
+                    1.00f at 0
+                    1.045f at 120
+                    0.99f at 280
+                    1.00f at 560
+                }
+            )
+        }
+    }
+
     TopAppBar(
         modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
         title = {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    logoAnimKey.intValue++
+                }
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_bunny_su),
                     contentDescription = null,
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .graphicsLayer {
+                            rotationZ = logoRotation.value
+                            scaleX = logoScale.value
+                            scaleY = logoScale.value
+
+                            // Xoay quanh gần phần dưới đầu thỏ để nhìn giống nghiêng đầu hơn
+                            transformOrigin = TransformOrigin(0.5f, 0.72f)
+                        }
                 )
                 Text(
                     text = stringResource(R.string.app_name),
