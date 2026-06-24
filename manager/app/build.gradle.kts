@@ -149,7 +149,7 @@ androidComponents {
 
 base {
     archivesName.set(
-        "KernelSU_${managerVersionName}_${managerVersionCode}"
+        "BunnySU_${managerVersionName}_${managerVersionCode}"
     )
 }
 
