@@ -252,8 +252,8 @@ fn sulogd_lock_path() -> Result<PathBuf> {
         return Ok(PathBuf::from(path));
     }
 
-    // Fallback cho trường hợp chạy trực tiếp `ksud sulogd` không qua spawn_sulogd().
-    // Giữ path cũ để tránh spawn nhiều sulogd vì mỗi process có random path khác nhau.
+    // Fallback khi chạy trực tiếp `ksud sulogd` không qua spawn_sulogd().
+    // Giữ path cũ để tránh mỗi process tự random lock khác nhau.
     Ok(PathBuf::from(defs::SULOGD_LOCK_PATH))
 }
 
@@ -813,11 +813,15 @@ pub fn spawn_sulogd() -> Result<()> {
         let mut command = Command::new(current_exe);
         command
             .arg("sulogd")
-            .env(SULOGD_LOCK_ENV, lock_path)
+            .env(SULOGD_LOCK_ENV, lock_path.as_os_str())
             .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .current_dir("/");
+
+        if let Some(runtime_path) = bunnyhide::runtime_path() {
+            command.env(bunnyhide::RUNTIME_PATH_ENV, runtime_path.as_os_str());
+        }
 
         Err(command.exec()).context("failed to exec sulogd")
     } else {
