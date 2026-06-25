@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Adb
 import androidx.compose.material.icons.filled.BugReport
@@ -50,7 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.bunny.su.R
-import com.bunny.su.ui.UiMode
 import com.bunny.su.ui.component.KsuIsValid
 import com.bunny.su.ui.component.material.SegmentedColumn
 import com.bunny.su.ui.component.material.SegmentedDropdownItem
@@ -95,6 +93,7 @@ fun SettingPagerMaterial(
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(8.dp))
+
             KsuIsValid {
                 SegmentedColumn(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -123,23 +122,43 @@ fun SettingPagerMaterial(
 
             SegmentedColumn(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                content = buildList {
-                    add {
-                        SegmentedDropdownItem(
-                            icon = Icons.Rounded.Dashboard,
-                            title = stringResource(id = R.string.settings_ui_mode),
-                            summary = stringResource(id = R.string.settings_ui_mode_summary),
-                            items = UiMode.entries.map { it.name },
-                            selectedIndex = if (uiState.uiMode == UiMode.Material.value) 1 else 0,
-                            onItemSelected = actions.onSetUiModeIndex
+                content = listOf(
+                    {
+                        SegmentedListItem(
+                            enabled = false,
+                            onClick = {},
+                            headlineContent = {
+                                Text(stringResource(id = R.string.settings_ui_mode))
+                            },
+                            supportingContent = {
+                                Text(stringResource(id = R.string.settings_ui_mode_summary))
+                            },
+                            leadingContent = {
+                                Icon(
+                                    Icons.Rounded.Dashboard,
+                                    stringResource(id = R.string.settings_ui_mode)
+                                )
+                            },
+                            trailingContent = {
+                                Text("Material")
+                            }
                         )
-                    }
-                    add {
+                    },
+                    {
                         SegmentedListItem(
                             onClick = actions.onOpenTheme,
-                            headlineContent = { Text(stringResource(id = R.string.settings_theme)) },
-                            supportingContent = { Text(stringResource(id = R.string.settings_theme_summary)) },
-                            leadingContent = { Icon(Icons.Filled.Palette, stringResource(id = R.string.settings_theme)) },
+                            headlineContent = {
+                                Text(stringResource(id = R.string.settings_theme))
+                            },
+                            supportingContent = {
+                                Text(stringResource(id = R.string.settings_theme_summary))
+                            },
+                            leadingContent = {
+                                Icon(
+                                    Icons.Filled.Palette,
+                                    stringResource(id = R.string.settings_theme)
+                                )
+                            },
                             trailingContent = {
                                 Icon(
                                     Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -148,10 +167,11 @@ fun SettingPagerMaterial(
                             }
                         )
                     }
-                }
+                )
             )
 
             val profileTemplate = stringResource(id = R.string.settings_profile_template)
+
             KsuIsValid {
                 SegmentedColumn(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -159,8 +179,12 @@ fun SettingPagerMaterial(
                         SegmentedListItem(
                             onClick = actions.onOpenProfileTemplate,
                             headlineContent = { Text(profileTemplate) },
-                            supportingContent = { Text(stringResource(id = R.string.settings_profile_template_summary)) },
-                            leadingContent = { Icon(Icons.Filled.Fence, profileTemplate) },
+                            supportingContent = {
+                                Text(stringResource(id = R.string.settings_profile_template_summary))
+                            },
+                            leadingContent = {
+                                Icon(Icons.Filled.Fence, profileTemplate)
+                            },
                             trailingContent = {
                                 Icon(
                                     Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -188,6 +212,7 @@ fun SettingPagerMaterial(
                                 "managed" -> stringResource(id = R.string.feature_status_managed_summary)
                                 else -> stringResource(id = R.string.settings_sucompat_summary)
                             }
+
                             SegmentedDropdownItem(
                                 icon = Icons.Filled.RemoveModerator,
                                 title = stringResource(id = R.string.settings_sucompat),
@@ -204,6 +229,7 @@ fun SettingPagerMaterial(
                                 "managed" -> stringResource(id = R.string.feature_status_managed_summary)
                                 else -> stringResource(id = R.string.settings_kernel_umount_summary)
                             }
+
                             SegmentedSwitchItem(
                                 icon = Icons.Filled.RemoveCircle,
                                 title = stringResource(id = R.string.settings_kernel_umount),
@@ -214,26 +240,12 @@ fun SettingPagerMaterial(
                             )
                         },
                         {
-                            val sulogSummary = when (uiState.sulogStatus) {
-                                "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
-                                "managed" -> stringResource(id = R.string.feature_status_managed_summary)
-                                else -> stringResource(id = R.string.settings_sulog_summary)
-                            }
-                            SegmentedSwitchItem(
-                                icon = Icons.AutoMirrored.Filled.Article,
-                                title = stringResource(id = R.string.settings_sulog),
-                                summary = sulogSummary,
-                                enabled = uiState.sulogStatus == "supported",
-                                checked = uiState.isSulogEnabled,
-                                onCheckedChange = actions.onSetSulogEnabled
-                            )
-                        },
-                        {
                             val adbRootSummary = when (uiState.adbRootStatus) {
                                 "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
                                 "managed" -> stringResource(id = R.string.feature_status_managed_summary)
                                 else -> stringResource(id = R.string.settings_adb_root_summary)
                             }
+
                             SegmentedSwitchItem(
                                 icon = Icons.Filled.Adb,
                                 title = stringResource(id = R.string.settings_adb_root),
@@ -287,11 +299,14 @@ fun SettingPagerMaterial(
                     content = listOf(
                         {
                             val uninstall = stringResource(id = R.string.settings_uninstall)
+
                             SegmentedListItem(
                                 onClick = { showUninstallDialog.value = true },
                                 enabled = !uiState.isLateLoadMode,
                                 headlineContent = { Text(uninstall) },
-                                leadingContent = { Icon(Icons.Filled.Delete, uninstall) }
+                                leadingContent = {
+                                    Icon(Icons.Filled.Delete, uninstall)
+                                }
                             )
                         }
                     )
@@ -304,7 +319,9 @@ fun SettingPagerMaterial(
                     {
                         SegmentedListItem(
                             onClick = { showBottomSheet = true },
-                            headlineContent = { Text(stringResource(id = R.string.send_log)) },
+                            headlineContent = {
+                                Text(stringResource(id = R.string.send_log))
+                            },
                             leadingContent = {
                                 Icon(
                                     Icons.Filled.BugReport,
@@ -316,7 +333,9 @@ fun SettingPagerMaterial(
                     {
                         SegmentedListItem(
                             onClick = actions.onOpenAbout,
-                            headlineContent = { Text(stringResource(id = R.string.about)) },
+                            headlineContent = {
+                                Text(stringResource(id = R.string.about))
+                            },
                             leadingContent = {
                                 Icon(
                                     Icons.Filled.ContactPage,
@@ -327,11 +346,13 @@ fun SettingPagerMaterial(
                     }
                 )
             )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             if (showBottomSheet) {
                 SendLogBottomSheet { showBottomSheet = false }
             }
+
             Spacer(modifier = Modifier.height(bottomInnerPadding))
         }
     }
