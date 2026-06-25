@@ -21,6 +21,11 @@ import com.bunny.su.ui.component.material.SegmentedRadioItem
 import com.bunny.su.ui.util.getCurrentKmi
 import com.bunny.su.ui.util.getSupportedKmis
 
+private data class CurrentKmiState(
+    val loaded: Boolean,
+    val value: String?
+)
+
 @Composable
 fun ChooseKmiDialogMaterial(
     show: Boolean,
@@ -33,12 +38,24 @@ fun ChooseKmiDialogMaterial(
         value = getSupportedKmis()
     }
 
-    val currentKmi by produceState<String?>(initialValue = null) {
-        value = getCurrentKmi()
+    val kmis = supportedKMIs ?: return
+
+    val currentKmiState by produceState(
+        initialValue = CurrentKmiState(
+            loaded = false,
+            value = null
+        ),
+        key1 = kmis
+    ) {
+        value = CurrentKmiState(
+            loaded = true,
+            value = getCurrentKmi(kmis)
+        )
     }
 
-    val kmis = supportedKMIs ?: return
-    val deviceKmi = currentKmi.orEmpty()
+    if (!currentKmiState.loaded) return
+
+    val deviceKmi = currentKmiState.value.orEmpty()
 
     if (deviceKmi.isNotBlank() && kmis.contains(deviceKmi)) {
         LaunchedEffect(deviceKmi, kmis) {
