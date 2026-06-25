@@ -9,7 +9,7 @@
     <string name="home_click_to_install">Tippe zum Installieren</string>
     <string name="selinux_status_unknown">Unbekannt</string>
     <string name="selinux_status_enforcing">Erzwingen</string>
-    <string name="reboot_bootloader">In den Bootloader-Modus neustarten</string>
+    <string name="reboot_bootloader">In den Fastboot-Modus neustarten</string>
     <string name="reboot_download">In den Download-Modus neustarten</string>
     <string name="reboot_edl">In den EDL-Modus neustarten</string>
     <string name="module_author">Autor</string>

@@ -27,7 +27,7 @@
     <string name="settings">Parametrlər</string>
     <string name="reboot_recovery">Bərpa rejimində yenidən başlat</string>
     <string name="reboot_userspace">Yüngül vəziyyətdə yenodən başlat</string>
-    <string name="reboot_bootloader">Bootloader rejimində yenidən başlat</string>
+    <string name="reboot_bootloader">Fastboot rejimində yenidən başlat</string>
     <string name="reboot_download">Yükləmə rejimində yenidən başlat</string>
     <string name="module_version">Versiya</string>
     <string name="module_author">Sahib</string>

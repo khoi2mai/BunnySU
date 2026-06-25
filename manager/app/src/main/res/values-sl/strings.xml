@@ -18,7 +18,7 @@
     <string name="install">Namesti</string>
     <string name="reboot_userspace">Mehki ponovni zagon</string>
     <string name="reboot_recovery">Ponovni zagon v Recovery</string>
-    <string name="reboot_bootloader">Ponovni zagon v Bootloader</string>
+    <string name="reboot_bootloader">Ponovni zagon v Fastboot</string>
     <string name="reboot_edl">Ponovni zagon v EDL</string>
     <string name="module_uninstall_confirm">Ste prepričani, da želite odstraniti modul %s?</string>
     <string name="module_uninstall_success">%s je odmeščen</string>

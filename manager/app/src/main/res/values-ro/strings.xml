@@ -27,7 +27,7 @@
     <string name="settings">Setări</string>
     <string name="reboot_userspace">Repornire rapidă</string>
     <string name="reboot_recovery">Repornire în Recuperare</string>
-    <string name="reboot_bootloader">Repornire în Bootloader</string>
+    <string name="reboot_bootloader">Repornire în Fastboot</string>
     <string name="reboot_download">Repornire în Download</string>
     <string name="reboot_edl">Repornire în EDL</string>
     <string name="about">Despre</string>

@@ -27,7 +27,7 @@
     <string name="settings">Налаштування</string>
     <string name="reboot_userspace">М\'яке перезавантаження</string>
     <string name="reboot_recovery">Перезавантажити до Recovery</string>
-    <string name="reboot_bootloader">Перезавантажити до Bootloader</string>
+    <string name="reboot_bootloader">Перезавантажити до Fastboot</string>
     <string name="reboot_download">Перезавантажити до Download</string>
     <string name="reboot_edl">Перезавантажити до EDL</string>
     <string name="about">Про додаток</string>

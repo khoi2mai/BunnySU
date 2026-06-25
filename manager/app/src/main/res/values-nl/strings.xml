@@ -27,7 +27,7 @@
     <string name="settings">Instellingen</string>
     <string name="reboot_userspace">Soft herstart</string>
     <string name="reboot_recovery">Herstart naar Recovery</string>
-    <string name="reboot_bootloader">Herstart naar Bootloader</string>
+    <string name="reboot_bootloader">Herstart naar Fastboot</string>
     <string name="reboot_download">Herstart om te downloaden</string>
     <string name="reboot_edl">Herstart naar EDL</string>
     <string name="about">Over</string>

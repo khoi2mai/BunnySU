@@ -27,7 +27,7 @@
     <string name="reboot">Redémarrer</string>
     <string name="install">Installer</string>
     <string name="settings">Paramètres</string>
-    <string name="reboot_bootloader">Redémarrer vers le bootloader</string>
+    <string name="reboot_bootloader">Redémarrer vers le fastboot</string>
     <string name="reboot_userspace">Redémarrage userspace</string>
     <string name="reboot_recovery">Redémarrer en mode Recovery</string>
     <string name="reboot_edl">Redémarrer en mode EDL</string>

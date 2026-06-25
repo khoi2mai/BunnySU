@@ -29,7 +29,7 @@
     <string name="settings">Настройки</string>
     <string name="reboot_userspace">Мягкая перезагрузка</string>
     <string name="reboot_recovery">Перезагрузить в Recovery</string>
-    <string name="reboot_bootloader">Перезагрузить в Bootloader</string>
+    <string name="reboot_bootloader">Перезагрузить в Fastboot</string>
     <string name="reboot_download">Перезагрузить в Download</string>
     <string name="reboot_edl">Перезагрузить в EDL</string>
     <string name="about">О приложении</string>

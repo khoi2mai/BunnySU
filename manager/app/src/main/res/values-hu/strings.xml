@@ -62,7 +62,7 @@ Csatlakozzon a %2$s csatornánkhoz</string>
     <string name="settings">Beállítások</string>
     <string name="reboot_userspace">Rendszerfelület újraindítása</string>
     <string name="reboot_recovery">Újraindítás recovery-módba</string>
-    <string name="reboot_bootloader">Újraindítás bootloader-módba</string>
+    <string name="reboot_bootloader">Újraindítás Fastboot-módba</string>
     <string name="module_uninstall_success">%s eltávolítva</string>
     <string name="module_version">Verzió</string>
     <string name="send_log">Naplók küldése</string>

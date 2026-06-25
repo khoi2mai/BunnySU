@@ -27,7 +27,7 @@
     <string name="settings">الإعدادات</string>
     <string name="reboot_userspace">إعادة تشغيل سريعة</string>
     <string name="reboot_recovery">إعادة تشغيل إلى وضع Recovery</string>
-    <string name="reboot_bootloader">إعادة تشغيل إلى وضع Bootloader</string>
+    <string name="reboot_bootloader">إعادة تشغيل إلى وضع Fastboot</string>
     <string name="reboot_download">إعادة تشغيل إلى وضع Download</string>
     <string name="reboot_edl">إعادة تشغيل إلى وضع EDL</string>
     <string name="about">من نحن</string>

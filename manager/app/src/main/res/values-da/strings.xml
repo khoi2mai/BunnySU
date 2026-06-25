@@ -59,7 +59,7 @@
     <string name="reboot_recovery">Genstart til Recovery</string>
     <string name="module">Modul</string>
     <string name="module_author">Forfatter</string>
-    <string name="reboot_bootloader">Genstart til Bootloader</string>
+    <string name="reboot_bootloader">Genstart til Fastboot</string>
     <string name="module_version">Version</string>
     <string name="show_system_apps">Vis system-apps</string>
     <string name="module_magisk_conflict">Moduler er utilgængelige på grund af en konflikt med Magisk!</string>
