@@ -20,13 +20,6 @@ import com.bunny.su.ui.component.material.SegmentedColumn
 import com.bunny.su.ui.component.material.SegmentedRadioItem
 import com.bunny.su.ui.util.getCurrentKmi
 import com.bunny.su.ui.util.getSupportedKmis
-import java.io.File
-import java.util.Locale
-
-private data class CurrentKmiState(
-    val loaded: Boolean,
-    val value: String?
-)
 
 @Composable
 fun ChooseKmiDialogMaterial(
@@ -40,34 +33,15 @@ fun ChooseKmiDialogMaterial(
         value = getSupportedKmis()
     }
 
-    val kmis = supportedKMIs ?: return
-
-    if (kmis.isEmpty()) {
-        LaunchedEffect(Unit) {
-            onDismissRequest()
-        }
-        return
+    val currentKmi by produceState<String?>(initialValue = null) {
+        value = getCurrentKmi()
     }
 
-    val currentKmiState by produceState(
-        initialValue = CurrentKmiState(
-            loaded = false,
-            value = null
-        ),
-        key1 = kmis
-    ) {
-        value = CurrentKmiState(
-            loaded = true,
-            value = findCurrentSupportedKmi(kmis)
-        )
-    }
+    val kmis = supportedKMIs
+    val deviceKmi = currentKmi
 
-    if (!currentKmiState.loaded) return
+    if (kmis == null || deviceKmi == null) return
 
-    val deviceKmi = currentKmiState.value.orEmpty()
-
-    // Nếu tự nhận được KMI và có trong danh sách hỗ trợ:
-    // chọn luôn, đóng dialog, không hiện bảng.
     if (deviceKmi.isNotBlank() && kmis.contains(deviceKmi)) {
         LaunchedEffect(deviceKmi, kmis) {
             onSelected(deviceKmi)
@@ -76,13 +50,9 @@ fun ChooseKmiDialogMaterial(
         return
     }
 
-    val selectedKmi = remember(deviceKmi, kmis) {
+    val selectedKmi = remember(deviceKmi) {
         mutableStateOf(
-            if (deviceKmi.isNotBlank() && kmis.contains(deviceKmi)) {
-                deviceKmi
-            } else {
-                kmis.firstOrNull().orEmpty()
-            }
+            if (deviceKmi.isNotBlank()) deviceKmi else ""
         )
     }
 
@@ -94,7 +64,7 @@ fun ChooseKmiDialogMaterial(
         confirmButton = {
             TextButton(
                 onClick = {
-                    onSelected(selectedKmi.value.ifBlank { null })
+                    onSelected(selectedKmi.value)
                     onDismissRequest()
                 },
                 enabled = kmis.contains(selectedKmi.value)
@@ -142,71 +112,4 @@ fun ChooseKmiDialogMaterial(
             )
         }
     )
-}
-
-private suspend fun findCurrentSupportedKmi(kmis: List<String>): String? {
-    // Lấy từ hàm hiện có của app trước.
-    val currentKmi = try {
-        getCurrentKmi().trim()
-    } catch (_: Throwable) {
-        ""
-    }
-
-    findKmiInSupportedList(
-        raw = currentKmi,
-        kmis = kmis
-    )?.let {
-        return it
-    }
-
-    // Fallback giống KernelSU: đọc kernel release, không cần root.
-    val kernelRelease = readKernelRelease()
-
-    return findKmiInSupportedList(
-        raw = kernelRelease.orEmpty(),
-        kmis = kmis
-    )
-}
-
-private fun readKernelRelease(): String? {
-    return runCatching {
-        File("/proc/sys/kernel/osrelease").readText().trim()
-    }.getOrNull()
-        ?: runCatching {
-            System.getProperty("os.version")?.trim()
-        }.getOrNull()
-}
-
-private fun findKmiInSupportedList(
-    raw: String,
-    kmis: List<String>
-): String? {
-    if (raw.isBlank()) return null
-
-    val lowerRaw = raw.lowercase(Locale.US)
-
-    // Match chính xác trước.
-    kmis.firstOrNull { kmi ->
-        lowerRaw == kmi.lowercase(Locale.US)
-    }?.let {
-        return it
-    }
-
-    kmis.firstOrNull { kmi ->
-        val lowerKmi = kmi.lowercase(Locale.US)
-        lowerRaw.contains(lowerKmi)
-    }?.let {
-        return it
-    }
-
-    return kmis.firstOrNull { kmi ->
-        val parts = kmi
-            .lowercase(Locale.US)
-            .split("-")
-            .filter { it.isNotBlank() }
-
-        parts.isNotEmpty() && parts.all { part ->
-            lowerRaw.contains(part)
-        }
-    }
 }

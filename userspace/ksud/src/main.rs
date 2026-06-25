@@ -64,7 +64,10 @@ mod ksu_uapi;
 fn main() -> anyhow::Result<()> {
     #[cfg(target_os = "android")]
     {
-        bunnyhide::init_random_path()?;
+        if should_init_bunnyhide() && is_root() {
+            bunnyhide::init_random_path()?;
+        }
+
         cli::run()
     }
 
@@ -72,4 +75,46 @@ fn main() -> anyhow::Result<()> {
     {
         cli_non_android::run()
     }
+}
+
+#[cfg(target_os = "android")]
+fn should_init_bunnyhide() -> bool {
+    let Some(command) = std::env::args().nth(1) else {
+        return false;
+    };
+
+    matches!(
+        command.as_str(),
+        "bunnyhide"
+            | "hide"
+            | "daemon"
+            | "service"
+            | "post-fs-data"
+            | "late-start"
+            | "boot-completed"
+    )
+}
+
+#[cfg(target_os = "android")]
+fn is_root() -> bool {
+    let Ok(status) = std::fs::read_to_string("/proc/self/status") else {
+        return false;
+    };
+
+    for line in status.lines() {
+        if !line.starts_with("Uid:") {
+            continue;
+        }
+
+        let mut fields = line.split_whitespace();
+
+        let _ = fields.next();
+
+        let real_uid = fields.next();
+        let effective_uid = fields.next().or(real_uid);
+
+        return effective_uid == Some("0");
+    }
+
+    false
 }

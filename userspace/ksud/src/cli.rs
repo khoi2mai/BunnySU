@@ -112,11 +112,13 @@ enum Commands {
         #[command(subcommand)]
         command: BootInfo,
     },
+
     /// For developers
     Debug {
         #[command(subcommand)]
         command: Debug,
     },
+
     /// Kernel interface
     Kernel {
         #[command(subcommand)]
@@ -432,11 +434,13 @@ enum Kernel {
         /// mount point
         mnt: String,
     },
+
     /// Manage umount list
     Umount {
         #[command(subcommand)]
         command: UmountOp,
     },
+
     /// Notify that module is mounted
     NotifyModuleMounted,
 }
@@ -451,11 +455,13 @@ enum UmountOp {
         #[arg(short, long, default_value = "0")]
         flags: u32,
     },
+
     /// Delete mount point from umount list
     Del {
         /// mount point path
         mnt: String,
     },
+
     /// Wipe all entries from umount list
     Wipe,
 }
@@ -475,7 +481,7 @@ pub fn run() -> Result<()> {
 
     if arg0.ends_with("resetprop") {
         let all_args: Vec<String> = std::env::args().collect();
-        crate::resetprop::resetprop_main(&all_args)
+        return crate::resetprop::resetprop_main(&all_args);
     }
 
     let cli = Args::parse();
@@ -483,8 +489,13 @@ pub fn run() -> Result<()> {
     log::info!("command: {:?}", cli.command);
 
     let result = match cli.command {
-        Commands::PostFsData => init_event::on_post_data_fs(),
+        Commands::PostFsData => {
+            init_bunnyhide_if_root()?;
+            init_event::on_post_data_fs()
+        }
+
         Commands::BootCompleted => {
+            init_bunnyhide_if_root()?;
             init_event::on_boot_completed();
             Ok(())
         }
@@ -514,7 +525,6 @@ pub fn run() -> Result<()> {
 
                     match command {
                         ModuleConfigCmd::Get { key } => {
-                            // Use merge_configs to respect priority (temp overrides persist)
                             let config = module_config::merge_configs(&module_id)?;
                             match config.get(&key) {
                                 Some(value) => {
@@ -530,14 +540,11 @@ pub fn run() -> Result<()> {
                             stdin,
                             temp,
                         } => {
-                            // Validate key at CLI layer for better user experience
                             module_config::validate_config_key(&key)?;
 
-                            // Read value from stdin or argument
                             let value_str = match value {
                                 Some(v) if !stdin => v,
                                 _ => {
-                                    // Read from stdin
                                     use std::io::Read;
                                     let mut buffer = String::new();
                                     std::io::stdin()
@@ -547,7 +554,6 @@ pub fn run() -> Result<()> {
                                 }
                             };
 
-                            // Validate value
                             module_config::validate_config_value(&value_str)?;
 
                             let config_type = if temp {
@@ -555,6 +561,7 @@ pub fn run() -> Result<()> {
                             } else {
                                 module_config::ConfigType::Persist
                             };
+
                             module_config::set_config_value(
                                 &module_id,
                                 &key,
@@ -593,20 +600,25 @@ pub fn run() -> Result<()> {
                 }
             }
         }
+
         Commands::Install {
             magiskboot,
             libadbroot,
         } => utils::install(magiskboot, libadbroot),
+
         Commands::Unload => crate::unload::unload(),
+
         Commands::Uninstall {
             magiskboot,
             package_name,
         } => utils::uninstall(magiskboot, &package_name),
+
         Commands::Sepolicy { command } => match command {
             Sepolicy::Patch { sepolicy } => crate::sepolicy::live_patch(&sepolicy),
             Sepolicy::Apply { file } => crate::sepolicy::apply_file(file),
             Sepolicy::Check { sepolicy } => crate::sepolicy::check_rule(&sepolicy),
         },
+
         Commands::LateLoad {
             magica,
             post_magica,
@@ -619,24 +631,33 @@ pub fn run() -> Result<()> {
                     e
                 });
             }
+
             let result = crate::late_load::run(&package_name, kmi);
+
             if post_magica {
                 info!("Restoring adb properties (post-magica cleanup)...");
                 if let Err(e) = crate::magica::disable_adb_root() {
                     error!("disable adb root failed: {e}");
                 }
             }
+
             result
         }
+
         Commands::Services => {
             if ksucalls::get_version() <= 0 {
                 info!("KernelSU not available, exiting services");
                 std::process::exit(0);
             }
+
+            init_bunnyhide_if_root()?;
+
             init_event::on_services();
             Ok(())
         }
+
         Commands::Sulogd => sulog::run_sulogd(),
+
         Commands::Profile { command } => match command {
             Profile::GetSepolicy { package } => crate::profile::get_sepolicy(package),
             Profile::SetSepolicy { package, policy } => {
@@ -699,7 +720,6 @@ pub fn run() -> Result<()> {
             BootInfo::CurrentKmi => {
                 let kmi = crate::boot_patch::get_current_kmi()?;
                 println!("{kmi}");
-                // return here to avoid printing the error message
                 return Ok(());
             }
             BootInfo::SupportedKmis => {
@@ -735,7 +755,9 @@ pub fn run() -> Result<()> {
                 return Ok(());
             }
         },
+
         Commands::BootRestore(boot_restore) => crate::boot_patch::restore(boot_restore),
+
         Commands::Resetprop { args } => {
             let mut full_args = vec!["resetprop".to_string()];
             full_args.extend(args);
@@ -759,5 +781,38 @@ pub fn run() -> Result<()> {
     if let Err(e) = &result {
         log::error!("Error: {e:?}");
     }
+
     result
+}
+
+fn init_bunnyhide_if_root() -> Result<()> {
+    if !is_root() {
+        log::debug!("skip bunnyhide init: not running as root");
+        return Ok(());
+    }
+
+    crate::bunnyhide::init_random_path()
+}
+
+fn is_root() -> bool {
+    let Ok(status) = std::fs::read_to_string("/proc/self/status") else {
+        return false;
+    };
+
+    for line in status.lines() {
+        if !line.starts_with("Uid:") {
+            continue;
+        }
+
+        let mut fields = line.split_whitespace();
+
+        let _ = fields.next();
+
+        let real_uid = fields.next();
+        let effective_uid = fields.next().or(real_uid);
+
+        return effective_uid == Some("0");
+    }
+
+    false
 }
