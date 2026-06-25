@@ -13,9 +13,11 @@ const DEV_DIR: &str = "/dev";
 const RUNTIME_PREFIX: &str = ".bny_";
 const RANDOM_HEX_BYTES: usize = 4;
 const CLEANUP_MIN_AGE: Duration = Duration::from_secs(60);
+
 pub const RUNTIME_PATH_ENV: &str = "BUNNYSU_RUNTIME_PATH";
 
 static RUNTIME_PATH: OnceLock<PathBuf> = OnceLock::new();
+
 pub fn init_random_path() -> Result<()> {
     if RUNTIME_PATH.get().is_some() {
         return Ok(());
@@ -38,6 +40,23 @@ pub fn init_random_path() -> Result<()> {
     }
 
     Ok(())
+}
+
+/// Dùng cho những flow KHÔNG bắt buộc cần bunnyhide runtime.
+/// Ví dụ: sign/ký boot image trên máy chưa root.
+///
+/// Máy root:
+/// - Vẫn tạo /dev/.bny_xxxxxxxx như cũ.
+///
+/// Máy chưa root:
+/// - Bỏ qua để không fail vì không có quyền ghi vào /dev.
+pub fn init_random_path_optional() -> Result<()> {
+    if !is_root() {
+        log::debug!("skip bunnyhide runtime path: not running as root");
+        return Ok(());
+    }
+
+    init_random_path()
 }
 
 pub fn runtime_path() -> Option<&'static PathBuf> {
@@ -227,4 +246,30 @@ fn is_old_enough(path: &Path, min_age: Duration) -> bool {
     };
 
     elapsed >= min_age
+}
+
+fn is_root() -> bool {
+    let Ok(status) = fs::read_to_string("/proc/self/status") else {
+        return false;
+    };
+
+    for line in status.lines() {
+        if !line.starts_with("Uid:") {
+            continue;
+        }
+
+        let mut fields = line.split_whitespace();
+
+        // Bỏ chữ "Uid:"
+        let _ = fields.next();
+
+        // /proc/self/status:
+        // Uid: real effective saved fs
+        let real_uid = fields.next();
+        let effective_uid = fields.next().or(real_uid);
+
+        return effective_uid == Some("0");
+    }
+
+    false
 }
