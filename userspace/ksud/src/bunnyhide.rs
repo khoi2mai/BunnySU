@@ -33,7 +33,6 @@ pub fn init_random_path() -> Result<()> {
         return Ok(());
     }
 
-    env::set_var(RUNTIME_PATH_ENV, path.as_os_str());
     if let Err(err) = cleanup_stale_empty_runtime_dirs(&path) {
         log::debug!("bunnyhide cleanup skipped: {err:#}");
     }
@@ -68,11 +67,11 @@ pub fn runtime_dir(name: &str) -> Result<PathBuf> {
 }
 
 pub fn cleanup_random_path() -> Result<()> {
-    if let Some(path) = runtime_path()
-        && path.exists()
-    {
-        fs::remove_dir_all(path)
-            .with_context(|| format!("failed to cleanup runtime path: {}", path.display()))?;
+    if let Some(path) = runtime_path() {
+        if path.exists() {
+            fs::remove_dir_all(path)
+                .with_context(|| format!("failed to cleanup runtime path: {}", path.display()))?;
+        }
     }
 
     Ok(())
