@@ -1,5 +1,7 @@
 use anyhow::{Context, Ok, Result};
 use clap::Parser;
+use std::ffi::CString;
+use std::io::Read;
 use std::path::PathBuf;
 
 use android_logger::Config;
@@ -112,11 +114,13 @@ enum Commands {
         #[command(subcommand)]
         command: BootInfo,
     },
+
     /// For developers
     Debug {
         #[command(subcommand)]
         command: Debug,
     },
+
     /// Kernel interface
     Kernel {
         #[command(subcommand)]
@@ -432,11 +436,13 @@ enum Kernel {
         /// mount point
         mnt: String,
     },
+
     /// Manage umount list
     Umount {
         #[command(subcommand)]
         command: UmountOp,
     },
+
     /// Notify that module is mounted
     NotifyModuleMounted,
 }
@@ -451,13 +457,37 @@ enum UmountOp {
         #[arg(short, long, default_value = "0")]
         flags: u32,
     },
+
     /// Delete mount point from umount list
     Del {
         /// mount point path
         mnt: String,
     },
+
     /// Wipe all entries from umount list
     Wipe,
+}
+
+fn random_process_name() -> String {
+    let mut buf = [0u8; 3];
+
+    if let Ok(mut f) = std::fs::File::open("/dev/urandom") {
+        let _ = f.read_exact(&mut buf);
+    }
+
+    format!("bnyd_{:02x}{:02x}{:02x}", buf[0], buf[1], buf[2])
+}
+
+fn set_random_process_name() {
+    let name = random_process_name();
+
+    if let Ok(cname) = CString::new(name.as_str()) {
+        unsafe {
+            libc::prctl(libc::PR_SET_NAME, cname.as_ptr(), 0, 0, 0);
+        }
+
+        info!("BunnySU process name: {name}");
+    }
 }
 
 pub fn run() -> Result<()> {
@@ -477,6 +507,8 @@ pub fn run() -> Result<()> {
         let all_args: Vec<String> = std::env::args().collect();
         crate::resetprop::resetprop_main(&all_args)
     }
+
+    set_random_process_name();
 
     let cli = Args::parse();
 
@@ -514,7 +546,6 @@ pub fn run() -> Result<()> {
 
                     match command {
                         ModuleConfigCmd::Get { key } => {
-                            // Use merge_configs to respect priority (temp overrides persist)
                             let config = module_config::merge_configs(&module_id)?;
                             match config.get(&key) {
                                 Some(value) => {
@@ -530,14 +561,11 @@ pub fn run() -> Result<()> {
                             stdin,
                             temp,
                         } => {
-                            // Validate key at CLI layer for better user experience
                             module_config::validate_config_key(&key)?;
 
-                            // Read value from stdin or argument
                             let value_str = match value {
                                 Some(v) if !stdin => v,
                                 _ => {
-                                    // Read from stdin
                                     use std::io::Read;
                                     let mut buffer = String::new();
                                     std::io::stdin()
@@ -547,7 +575,6 @@ pub fn run() -> Result<()> {
                                 }
                             };
 
-                            // Validate value
                             module_config::validate_config_value(&value_str)?;
 
                             let config_type = if temp {
@@ -593,20 +620,25 @@ pub fn run() -> Result<()> {
                 }
             }
         }
+
         Commands::Install {
             magiskboot,
             libadbroot,
         } => utils::install(magiskboot, libadbroot),
+
         Commands::Unload => crate::unload::unload(),
+
         Commands::Uninstall {
             magiskboot,
             package_name,
         } => utils::uninstall(magiskboot, &package_name),
+
         Commands::Sepolicy { command } => match command {
             Sepolicy::Patch { sepolicy } => crate::sepolicy::live_patch(&sepolicy),
             Sepolicy::Apply { file } => crate::sepolicy::apply_file(file),
             Sepolicy::Check { sepolicy } => crate::sepolicy::check_rule(&sepolicy),
         },
+
         Commands::LateLoad {
             magica,
             post_magica,
@@ -628,6 +660,7 @@ pub fn run() -> Result<()> {
             }
             result
         }
+
         Commands::Services => {
             if ksucalls::get_version() <= 0 {
                 info!("KernelSU not available, exiting services");
@@ -636,7 +669,9 @@ pub fn run() -> Result<()> {
             init_event::on_services();
             Ok(())
         }
+
         Commands::Sulogd => sulog::run_sulogd(),
+
         Commands::Profile { command } => match command {
             Profile::GetSepolicy { package } => crate::profile::get_sepolicy(package),
             Profile::SetSepolicy { package, policy } => {
@@ -699,7 +734,6 @@ pub fn run() -> Result<()> {
             BootInfo::CurrentKmi => {
                 let kmi = crate::boot_patch::get_current_kmi()?;
                 println!("{kmi}");
-                // return here to avoid printing the error message
                 return Ok(());
             }
             BootInfo::SupportedKmis => {
@@ -735,7 +769,9 @@ pub fn run() -> Result<()> {
                 return Ok(());
             }
         },
+
         Commands::BootRestore(boot_restore) => crate::boot_patch::restore(boot_restore),
+
         Commands::Resetprop { args } => {
             let mut full_args = vec!["resetprop".to_string()];
             full_args.extend(args);
