@@ -1,30 +1,33 @@
 use std::fs;
+use std::io::Read;
 use std::path::PathBuf;
+use std::sync::OnceLock;
 
-pub struct BunnyHide {
-    runtime_path: PathBuf,
+static RUNTIME_PATH: OnceLock<PathBuf> = OnceLock::new();
+
+pub fn init_random_path() -> anyhow::Result<()> {
+    let path = PathBuf::from(format!("/dev/.bny_{}", random_hex()));
+
+    fs::create_dir_all(&path)?;
+
+    let _ = RUNTIME_PATH.set(path);
+
+    Ok(())
 }
 
-impl BunnyHide {
-    pub fn init() -> std::io::Result<Self> {
-        let path = PathBuf::from(format!("/dev/.bny_{}", random_hex()));
-        fs::create_dir_all(&path)?;
-        Ok(Self { runtime_path: path })
-    }
-
-    pub fn runtime_path(&self) -> &PathBuf {
-        &self.runtime_path
-    }
+pub fn runtime_path() -> Option<&'static PathBuf> {
+    RUNTIME_PATH.get()
 }
 
 fn random_hex() -> String {
-    use std::fs::File;
-    use std::io::Read;
-
     let mut buf = [0u8; 4];
-    if let Ok(mut f) = File::open("/dev/urandom") {
+
+    if let Ok(mut f) = fs::File::open("/dev/urandom") {
         let _ = f.read_exact(&mut buf);
     }
 
-    format!("{:02x}{:02x}{:02x}{:02x}", buf[0], buf[1], buf[2], buf[3])
+    format!(
+        "{:02x}{:02x}{:02x}{:02x}",
+        buf[0], buf[1], buf[2], buf[3]
+    )
 }
