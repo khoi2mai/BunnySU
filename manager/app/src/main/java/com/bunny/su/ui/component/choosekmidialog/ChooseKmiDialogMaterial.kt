@@ -37,10 +37,8 @@ fun ChooseKmiDialogMaterial(
         value = getCurrentKmi()
     }
 
-    val kmis = supportedKMIs
-    val deviceKmi = currentKmi
-
-    if (kmis == null || deviceKmi == null) return
+    val kmis = supportedKMIs ?: return
+    val deviceKmi = currentKmi.orEmpty()
 
     if (deviceKmi.isNotBlank() && kmis.contains(deviceKmi)) {
         LaunchedEffect(deviceKmi, kmis) {
@@ -50,9 +48,13 @@ fun ChooseKmiDialogMaterial(
         return
     }
 
-    val selectedKmi = remember(deviceKmi) {
+    val selectedKmi = remember(deviceKmi, kmis) {
         mutableStateOf(
-            if (deviceKmi.isNotBlank()) deviceKmi else ""
+            if (deviceKmi.isNotBlank() && kmis.contains(deviceKmi)) {
+                deviceKmi
+            } else {
+                kmis.firstOrNull().orEmpty()
+            }
         )
     }
 
@@ -64,7 +66,7 @@ fun ChooseKmiDialogMaterial(
         confirmButton = {
             TextButton(
                 onClick = {
-                    onSelected(selectedKmi.value)
+                    onSelected(selectedKmi.value.ifBlank { null })
                     onDismissRequest()
                 },
                 enabled = kmis.contains(selectedKmi.value)
