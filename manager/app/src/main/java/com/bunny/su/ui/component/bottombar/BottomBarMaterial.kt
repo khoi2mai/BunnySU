@@ -1,5 +1,6 @@
 package com.bunny.su.ui.component.bottombar
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -26,6 +28,8 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +57,15 @@ fun BottomBarMaterial() {
         Triple(R.string.settings, Icons.Filled.Settings, Icons.Outlined.Settings)
     )
 
+    val dockShape = RoundedCornerShape(28.dp)
+    val selectedShape = RoundedCornerShape(20.dp)
+
+    val dockColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    val selectedColor = MaterialTheme.colorScheme.secondaryContainer
+    val selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer
+    val unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val borderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.28f)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,42 +74,48 @@ fun BottomBarMaterial() {
                     .union(WindowInsets.displayCutout)
                     .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
             )
-            .padding(bottom = 12.dp),
+            .padding(bottom = 14.dp),
         contentAlignment = Alignment.Center
     ) {
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(30.dp))
-                .background(Color(0xFF151922))
-                .padding(horizontal = 10.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Surface(
+            shape = dockShape,
+            color = dockColor,
+            tonalElevation = 8.dp,
+            shadowElevation = 18.dp,
+            border = BorderStroke(1.dp, borderColor)
         ) {
-            items.forEachIndexed { index, (label, selectedIcon, unselectedIcon) ->
-                val selected = mainPagerState.selectedPage == index
+            Row(
+                modifier = Modifier
+                    .clip(dockShape)
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                items.forEachIndexed { index, (label, selectedIcon, unselectedIcon) ->
+                    val selected = mainPagerState.selectedPage == index
 
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(
-                            if (selected) Color(0xFF334055)
-                            else Color.Transparent
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(selectedShape)
+                            .background(
+                                if (selected) selectedColor
+                                else Color.Transparent
+                            )
+                            .clickable {
+                                if (!selected) {
+                                    mainPagerState.animateToPage(index)
+                                }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (selected) selectedIcon else unselectedIcon,
+                            contentDescription = stringResource(label),
+                            tint = if (selected) selectedIconColor else unselectedIconColor,
+                            modifier = Modifier.size(28.dp)
                         )
-                        .clickable {
-                            if (!selected) {
-                                mainPagerState.animateToPage(index)
-                            }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (selected) selectedIcon else unselectedIcon,
-                        contentDescription = stringResource(label),
-                        tint = if (selected) Color(0xFFBFD6FF)
-                        else Color(0xFFAEB4C2),
-                        modifier = Modifier.size(28.dp)
-                    )
+                    }
                 }
             }
         }
