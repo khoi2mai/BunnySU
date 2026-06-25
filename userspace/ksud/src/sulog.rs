@@ -12,7 +12,7 @@ use std::process::{Command, Stdio};
 use std::thread;
 use std::time::Duration;
 
-use crate::{defs, ksucalls, module_config, utils};
+use crate::{bunnyhide, defs, ksucalls, module_config, utils};
 
 const KSU_EVENT_QUEUE_TYPE_DROPPED: u16 = u16::MAX;
 const KSU_EVENT_RECORD_FLAG_INTERNAL: u16 = 1;
@@ -21,6 +21,8 @@ const READ_BUF_SIZE: usize = 8192;
 const SULOGD_RESTART_DELAY: Duration = Duration::from_secs(3);
 const SULOG_DIR_MODE: u32 = 0o700;
 const SULOG_FILE_MODE: u32 = 0o600;
+const SULOGD_LOCK_ENV: &str = "BUNNYSU_SULOGD_LOCK_PATH";
+
 pub const SULOG_CONFIG_MODULE_ID: &str = "internal.ksud.sulogd";
 const SULOG_RETENTION_CONFIG_KEY: &str = "log.retention.days";
 const SULOG_MAX_FILE_SIZE_CONFIG_KEY: &str = "log.max_file_size";
@@ -176,14 +178,19 @@ impl SulogEvent {
 
 impl SulogdLockGuard {
     fn acquire() -> Result<Option<Self>> {
-        ensure_private_dir_exists(Path::new(defs::WORKING_DIR))?;
+        let lock_path = sulogd_lock_path()?;
+
+        if let Some(parent) = lock_path.parent() {
+            ensure_private_dir_exists(parent)?;
+        }
+
         let file = OpenOptions::new()
             .read(true)
             .write(true)
             .create(true)
             .mode(SULOG_FILE_MODE)
-            .open(defs::SULOGD_LOCK_PATH)
-            .with_context(|| format!("failed to open {}", defs::SULOGD_LOCK_PATH))?;
+            .open(&lock_path)
+            .with_context(|| format!("failed to open {}", lock_path.display()))?;
 
         if try_lock_file(&file)? {
             return Ok(Some(Self { _lock_file: file }));
@@ -236,6 +243,23 @@ impl DailyLogWriter {
         }
         Ok(())
     }
+}
+
+fn sulogd_lock_path() -> Result<PathBuf> {
+    if let Ok(path) = std::env::var(SULOGD_LOCK_ENV) {
+        let path = path.trim();
+        ensure!(!path.is_empty(), "{SULOGD_LOCK_ENV} is empty");
+        return Ok(PathBuf::from(path));
+    }
+
+    // Fallback cho trường hợp chạy trực tiếp `ksud sulogd` không qua spawn_sulogd().
+    // Giữ path cũ để tránh spawn nhiều sulogd vì mỗi process có random path khác nhau.
+    Ok(PathBuf::from(defs::SULOGD_LOCK_PATH))
+}
+
+fn random_sulogd_lock_path() -> PathBuf {
+    bunnyhide::runtime_file("sulogd.lock")
+        .unwrap_or_else(|_| PathBuf::from(defs::SULOGD_LOCK_PATH))
 }
 
 fn parse_c_string(bytes: &[u8]) -> String {
@@ -780,9 +804,16 @@ pub fn run_sulogd() -> Result<()> {
 pub fn spawn_sulogd() -> Result<()> {
     if utils::create_daemon(true)? {
         let current_exe = std::env::current_exe().context("failed to resolve current ksud path")?;
+        let lock_path = random_sulogd_lock_path();
+
+        if let Some(parent) = lock_path.parent() {
+            ensure_private_dir_exists(parent)?;
+        }
+
         let mut command = Command::new(current_exe);
         command
             .arg("sulogd")
+            .env(SULOGD_LOCK_ENV, lock_path)
             .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
