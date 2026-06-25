@@ -27,12 +27,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -58,24 +53,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import com.bunny.su.R
 import com.bunny.su.ui.component.material.SearchAppBar
-import com.bunny.su.ui.component.material.SegmentedColumn
-import com.bunny.su.ui.component.material.SegmentedDropdownItem
 import com.bunny.su.ui.component.material.SegmentedItem
 import com.bunny.su.ui.component.material.SegmentedListItem
 import com.bunny.su.ui.component.material.TonalCard
 import com.bunny.su.ui.component.statustag.StatusTag
 import com.bunny.su.ui.util.SulogEntry
-import com.bunny.su.ui.util.SulogEventFilter
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -88,10 +78,7 @@ fun SulogScreenMaterial(
     val listState = rememberLazyListState()
     val searchListState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-    val haptic = LocalHapticFeedback.current
-    val fileSelector = buildSulogFileSelector(state.files, state.selectedFilePath)
     var selectedEntry by remember { mutableStateOf<SulogEntry?>(null) }
-    var showFilterMenu by remember { mutableStateOf(false) }
     var localSearchText by remember { mutableStateOf(state.searchText) }
 
     LaunchedEffect(state.searchText) {
@@ -99,8 +86,13 @@ fun SulogScreenMaterial(
     }
 
     val scaleFraction = {
-        if (state.isLoading || state.isRefreshing) 1f
-        else LinearOutSlowInEasing.transform(pullToRefreshState.distanceFraction).coerceIn(0f, 1f)
+        if (state.isLoading || state.isRefreshing) {
+            1f
+        } else {
+            LinearOutSlowInEasing
+                .transform(pullToRefreshState.distanceFraction)
+                .coerceIn(0f, 1f)
+        }
     }
 
     if (selectedEntry != null) {
@@ -133,43 +125,16 @@ fun SulogScreenMaterial(
                 },
                 navigationIcon = {
                     IconButton(onClick = actions.onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = actions.onCleanFile) {
                         Icon(
-                            imageVector = Icons.Filled.DeleteSweep,
-                            contentDescription = stringResource(R.string.sulog_clean_title),
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
                         )
                     }
-                    IconButton(onClick = { showFilterMenu = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.FilterList,
-                            contentDescription = stringResource(R.string.sulog_filter_title),
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = showFilterMenu,
-                        onDismissRequest = { showFilterMenu = false },
-                    ) {
-                        SulogEventFilter.entries.forEach { filter ->
-                            DropdownMenuItem(
-                                text = { Text(sulogFilterLabel(filter)) },
-                                trailingIcon = {
-                                    Checkbox(
-                                        checked = filter in state.selectedFilters,
-                                        onCheckedChange = null,
-                                    )
-                                },
-                                onClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
-                                    actions.onToggleFilter(filter)
-                                },
-                            )
-                        }
-                    }
                 },
+
+                // SU Log đã tắt: không còn nút Clean / Filter.
+                actions = {},
+
                 scrollBehavior = scrollBehavior,
                 searchContent = { bottomPadding, _ ->
                     LazyColumn(
@@ -193,7 +158,9 @@ fun SulogScreenMaterial(
                 },
             )
         },
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+        contentWindowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+        ),
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -207,26 +174,6 @@ fun SulogScreenMaterial(
             ) {
                 item {
                     SulogStatusSection(state)
-                }
-
-                item {
-                    Box(modifier = Modifier.padding(bottom = 16.dp)) {
-                        SegmentedColumn(
-                            content = listOf {
-                                SegmentedDropdownItem(
-                                    title = stringResource(R.string.sulog_log_files),
-                                    items = fileSelector.items,
-                                    enabled = fileSelector.items.isNotEmpty(),
-                                    selectedIndex = fileSelector.selectedIndex,
-                                    onItemSelected = { index ->
-                                        state.files.getOrNull(index)?.let { file ->
-                                            actions.onSelectFile(file.path)
-                                        }
-                                    }
-                                )
-                            },
-                        )
-                    }
                 }
 
                 sulogEntriesSection(
@@ -289,39 +236,50 @@ private fun LazyListScope.sulogEntriesSection(
                             Modifier
                         },
                         onClick = { onEntryClick(entry) },
-                        headlineContent = { Text(sulogEntryTitle(entry)) },
+                        headlineContent = {
+                            Text(sulogEntryTitle(entry))
+                        },
                         supportingContent = {
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                 sulogEntryDescription(entry)?.let {
                                     Text(
-                                        it,
+                                        text = it,
                                         style = typography.bodySmall,
                                         maxLines = 2,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                 }
+
                                 entry.timestampText?.let {
                                     Text(
-                                        it,
+                                        text = it,
                                         style = typography.labelMediumEmphasized,
                                         color = colorScheme.onSurfaceVariant,
                                     )
                                 }
+
                                 Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                                     val colors = listOf(
                                         colorScheme.primary to colorScheme.onPrimary,
                                         colorScheme.secondary to colorScheme.onSecondary,
                                         colorScheme.tertiary to colorScheme.onTertiary,
                                     )
+
                                     sulogEntrySummaryTags(entry).forEachIndexed { index, tag ->
                                         val (bg, fg) = colors.getOrElse(index) { colors.last() }
-                                        StatusTag(label = tag, backgroundColor = bg, contentColor = fg)
+                                        StatusTag(
+                                            label = tag,
+                                            backgroundColor = bg,
+                                            contentColor = fg
+                                        )
                                     }
                                 }
                             }
                         },
                         trailingContent = {
-                            sulogEntryStatus(entry)?.let { Text(it) }
+                            sulogEntryStatus(entry)?.let {
+                                Text(it)
+                            }
                         },
                     )
                 }
@@ -362,10 +320,14 @@ private fun SulogMessageCard(
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(title, color = colorScheme.outline)
+            Text(
+                text = title,
+                color = colorScheme.outline
+            )
+
             if (summary != null) {
                 Text(
-                    summary,
+                    text = summary,
                     color = colorScheme.outline,
                     fontSize = typography.bodySmall.fontSize,
                     maxLines = 3,
@@ -379,7 +341,6 @@ private fun SulogMessageCard(
 @Composable
 private fun WarningCard(
     text: String,
-    action: (@Composable () -> Unit)? = null,
 ) {
     TonalCard(
         modifier = Modifier.padding(bottom = 16.dp),
@@ -389,7 +350,6 @@ private fun WarningCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp, horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -397,7 +357,6 @@ private fun WarningCard(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f),
             )
-            action?.invoke()
         }
     }
 }
@@ -409,7 +368,9 @@ private fun SulogDetailDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(sulogEntryTitle(entry)) },
+        title = {
+            Text(sulogEntryTitle(entry))
+        },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())

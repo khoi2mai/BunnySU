@@ -125,7 +125,6 @@ fun SettingPagerMaterial(
                 content = listOf(
                     {
                         SegmentedListItem(
-                            enabled = false,
                             onClick = {},
                             headlineContent = {
                                 Text(stringResource(id = R.string.settings_ui_mode))
