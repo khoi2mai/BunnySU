@@ -30,8 +30,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -208,7 +206,7 @@ fun SulogScreenMaterial(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 item {
-                    SulogStatusSection(state, actions)
+                    SulogStatusSection(state)
                 }
 
                 item {
@@ -335,7 +333,6 @@ private fun LazyListScope.sulogEntriesSection(
 @Composable
 private fun SulogStatusSection(
     state: SulogScreenState,
-    actions: SulogActions,
 ) {
     when (state.sulogStatus) {
         "unsupported" -> {
@@ -347,20 +344,7 @@ private fun SulogStatusSection(
         }
 
         "supported" if !state.isSulogEnabled -> {
-            WarningCard(
-                text = stringResource(R.string.sulog_disabled_title),
-                action = {
-                    Button(
-                        onClick = actions.onEnableSulog,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorScheme.error,
-                            contentColor = colorScheme.onError,
-                        ),
-                    ) {
-                        Text(stringResource(R.string.sulog_enable_action))
-                    }
-                },
-            )
+            WarningCard(text = stringResource(R.string.sulog_disabled_title))
         }
 
         else -> Unit

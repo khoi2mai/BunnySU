@@ -43,10 +43,12 @@ fun SulogScreen() {
         visibleEntries = uiState.visibleEntries,
         errorMessage = uiState.errorMessage,
     )
+
     val actions = SulogActions(
         onBack = dropUnlessResumed { navigator.pop() },
         onRefresh = viewModel::refreshLatest,
-        onEnableSulog = viewModel::enableSulog,
+        onEnableSulog = {},
+
         onCleanFile = viewModel::cleanFile,
         onSearchTextChange = viewModel::setSearchText,
         onToggleFilter = viewModel::toggleFilter,
@@ -69,21 +71,49 @@ fun sulogFilterLabel(filter: SulogEventFilter): String {
 @Composable
 fun sulogEntryTitle(entry: SulogEntry): String {
     return when (entry.eventType) {
-        SulogEventType.RootExecve -> entry.fields["comm"] ?: stringResource(R.string.sulog_filter_root_execve)
-        SulogEventType.SuCompat -> stringResource(R.string.sulog_filter_sucompat)
-        SulogEventType.IoctlGrantRoot -> stringResource(R.string.sulog_filter_ioctl_grant_root)
-        SulogEventType.DaemonEvent -> stringResource(R.string.sulog_filter_daemon_restart)
-        SulogEventType.Dropped -> "Dropped"
-        SulogEventType.Unknown -> entry.fields["type"]?.replace('_', ' ')?.replaceFirstChar(Char::uppercase) ?: "Unknown"
+        SulogEventType.RootExecve -> {
+            entry.fields["comm"] ?: stringResource(R.string.sulog_filter_root_execve)
+        }
+
+        SulogEventType.SuCompat -> {
+            stringResource(R.string.sulog_filter_sucompat)
+        }
+
+        SulogEventType.IoctlGrantRoot -> {
+            stringResource(R.string.sulog_filter_ioctl_grant_root)
+        }
+
+        SulogEventType.DaemonEvent -> {
+            stringResource(R.string.sulog_filter_daemon_restart)
+        }
+
+        SulogEventType.Dropped -> {
+            "Dropped"
+        }
+
+        SulogEventType.Unknown -> {
+            entry.fields["type"]
+                ?.replace('_', ' ')
+                ?.replaceFirstChar(Char::uppercase)
+                ?: "Unknown"
+        }
     }
 }
 
 @Composable
 fun sulogEntryDescription(entry: SulogEntry): String? {
     return when (entry.eventType) {
-        SulogEventType.DaemonEvent -> entry.fields["boot_id"]?.let { "Boot ID: $it" }
-        SulogEventType.Dropped -> entry.fields["ts_ns"]?.let { "Timestamp: $it" }
-        else -> entry.fields["argv"] ?: entry.fields["file"]
+        SulogEventType.DaemonEvent -> {
+            entry.fields["boot_id"]?.let { "Boot ID: $it" }
+        }
+
+        SulogEventType.Dropped -> {
+            entry.fields["ts_ns"]?.let { "Timestamp: $it" }
+        }
+
+        else -> {
+            entry.fields["argv"] ?: entry.fields["file"]
+        }
     }
 }
 
@@ -91,19 +121,39 @@ fun sulogEntrySummaryTags(entry: SulogEntry): List<String> {
     val comm = entry.fields["comm"]
     val pid = entry.fields["pid"]
     val uid = entry.fields["uid"]
+
     return when (entry.eventType) {
-        SulogEventType.DaemonEvent -> listOfNotNull(entry.fields["restart"]?.let { "Restart #$it" } ?: "Daemon restarted")
-        SulogEventType.Dropped -> listOfNotNull(entry.fields["dropped"]?.let { "$it lost" })
-        else -> listOfNotNull(comm?.takeIf { it.isNotBlank() }, pid?.let { "PID $it" }, uid?.let { "UID $it" })
+        SulogEventType.DaemonEvent -> {
+            listOfNotNull(
+                entry.fields["restart"]?.let { "Restart #$it" }
+                    ?: "Daemon restarted"
+            )
+        }
+
+        SulogEventType.Dropped -> {
+            listOfNotNull(
+                entry.fields["dropped"]?.let { "$it lost" }
+            )
+        }
+
+        else -> {
+            listOfNotNull(
+                comm?.takeIf { it.isNotBlank() },
+                pid?.let { "PID $it" },
+                uid?.let { "UID $it" }
+            )
+        }
     }
 }
 
 fun sulogEntryDetailText(entry: SulogEntry) = buildAnnotatedString {
     entry.fields.entries.forEachIndexed { index, (key, value) ->
         if (index > 0) append('\n')
+
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append("$key: ")
         }
+
         append(value)
     }
 }
@@ -113,7 +163,11 @@ fun sulogEntryStatus(entry: SulogEntry): String? {
 }
 
 private fun formatSulogStatus(retval: Int): String {
-    return if (retval == 0) "Success" else "Exit $retval"
+    return if (retval == 0) {
+        "Success"
+    } else {
+        "Exit $retval"
+    }
 }
 
 fun buildSulogFileSelector(
@@ -127,7 +181,6 @@ fun buildSulogFileSelector(
         )
     }
 
-    // ĐÃ SỬA DÒNG DƯỚI ĐÂY (Xóa chữ 'box')
     val selectedIndex = files.indexOfFirst { it.path == selectedFilePath }
         .takeIf { it >= 0 }
         ?: 0
