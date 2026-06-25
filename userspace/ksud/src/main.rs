@@ -13,6 +13,10 @@
 mod apk_sign;
 mod assets;
 mod boot_patch;
+
+#[cfg(target_os = "android")]
+mod bunnyhide;
+
 #[cfg(target_os = "android")]
 mod cli;
 #[cfg(not(target_os = "android"))]
@@ -60,8 +64,10 @@ mod ksu_uapi;
 fn main() -> anyhow::Result<()> {
     #[cfg(target_os = "android")]
     {
+        bunnyhide::init_random_path()?;
         cli::run()
     }
+
     #[cfg(not(target_os = "android"))]
     {
         cli_non_android::run()
