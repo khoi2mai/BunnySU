@@ -91,7 +91,7 @@ fun AboutScreenMaterial(
                         modifier = Modifier
                             .size(80.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .background(Color.White)
+                            .background(Color.black)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),

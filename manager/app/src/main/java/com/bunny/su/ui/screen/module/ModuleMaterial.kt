@@ -556,7 +556,7 @@ private fun ModuleShortcutSheet(
                     Box(
                         modifier = Modifier
                             .size(100.dp)
-                            .background(Color.White)
+                            .background(Color.black)
                     )
                     Image(
                         painter = painterResource(id = R.drawable.ic_launcher_foreground),
