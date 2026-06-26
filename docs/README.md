@@ -1,7 +1,7 @@
 #  🐰 BunnySU
 
 <p align="center">
-  <img src="https://kernelsu.org/logo.png" width="96" alt="BunnySU Logo">
+  <img src="docs/assets/bunnysu-logo.png" width="96" alt="BunnySU Logo">
 </p>
 
 <p align="center">
