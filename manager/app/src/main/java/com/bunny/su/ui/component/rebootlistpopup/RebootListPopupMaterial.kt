@@ -1,7 +1,5 @@
 package com.bunny.su.ui.component.rebootlistpopup
 
-import android.content.Context
-import android.os.PowerManager
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material3.DropdownMenu
@@ -14,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.bunny.su.R
 import com.bunny.su.ui.component.KsuIsValid
@@ -22,21 +19,13 @@ import com.bunny.su.ui.util.reboot
 
 @Composable
 fun RebootDropdownItems(onItemClick: (String) -> Unit) {
-    val pm = LocalContext.current.getSystemService(Context.POWER_SERVICE) as PowerManager?
-
-    @Suppress("DEPRECATION")
-    val isRebootingUserspaceSupported = pm?.isRebootingUserspaceSupported == true
-
-    val rebootOptions = mutableListOf(
+    val rebootOptions = listOf(
         Pair(R.string.reboot, ""),
-        Pair(R.string.reboot_soft, "soft_reboot"),
         Pair(R.string.reboot_recovery, "recovery"),
         Pair(R.string.reboot_bootloader, "bootloader"),
         Pair(R.string.reboot_edl, "edl")
     )
-    if (isRebootingUserspaceSupported) {
-        rebootOptions.add(1, Pair(R.string.reboot_userspace, "userspace"))
-    }
+
     rebootOptions.forEach { (id, reason) ->
         DropdownMenuItem(
             text = { Text("  " + stringResource(id)) },
