@@ -1,7 +1,7 @@
 #  🐰 BunnySU
 
 <p align="center">
-  <img src="docs/assets/bunnysu-logo.png" width="96" alt="BunnySU Logo">
+  <img src="bunnysu-logo.png" width="96" alt="BunnySU Logo">
 </p>
 
 <p align="center">
