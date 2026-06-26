@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Adb
-import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.ContactPage
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeveloperMode
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.RemoveModerator
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.UploadFile
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -32,17 +30,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -54,14 +48,8 @@ import com.bunny.su.ui.component.material.SegmentedColumn
 import com.bunny.su.ui.component.material.SegmentedDropdownItem
 import com.bunny.su.ui.component.material.SegmentedListItem
 import com.bunny.su.ui.component.material.SegmentedSwitchItem
-import com.bunny.su.ui.component.material.SendLogBottomSheet
 import com.bunny.su.ui.component.uninstalldialog.UninstallDialog
-import com.bunny.su.ui.util.LocalSnackbarHost
 
-/**
- * @author weishu
- * @date 2023/1/1.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingPagerMaterial(
@@ -70,9 +58,7 @@ fun SettingPagerMaterial(
     bottomInnerPadding: Dp,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val snackBarHost = LocalSnackbarHost.current
     val showUninstallDialog = rememberSaveable { mutableStateOf(false) }
-    var showBottomSheet by remember { mutableStateOf(false) }
 
     UninstallDialog(
         show = showUninstallDialog.value,
@@ -83,8 +69,9 @@ fun SettingPagerMaterial(
         topBar = {
             TopBar(scrollBehavior = scrollBehavior)
         },
-        snackbarHost = { SnackbarHost(snackBarHost) },
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+        contentWindowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+        )
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -120,29 +107,11 @@ fun SettingPagerMaterial(
                 )
             }
 
+            val profileTemplate = stringResource(id = R.string.settings_profile_template)
+
             SegmentedColumn(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 content = listOf(
-                    {
-                        SegmentedListItem(
-                            onClick = {},
-                            headlineContent = {
-                                Text(stringResource(id = R.string.settings_ui_mode))
-                            },
-                            supportingContent = {
-                                Text(stringResource(id = R.string.settings_ui_mode_summary))
-                            },
-                            leadingContent = {
-                                Icon(
-                                    Icons.Rounded.Dashboard,
-                                    stringResource(id = R.string.settings_ui_mode)
-                                )
-                            },
-                            trailingContent = {
-                                Text("Material")
-                            }
-                        )
-                    },
                     {
                         SegmentedListItem(
                             onClick = actions.onOpenTheme,
@@ -165,35 +134,31 @@ fun SettingPagerMaterial(
                                 )
                             }
                         )
+                    },
+                    {
+                        KsuIsValid {
+                            SegmentedListItem(
+                                onClick = actions.onOpenProfileTemplate,
+                                headlineContent = {
+                                    Text(profileTemplate)
+                                },
+                                supportingContent = {
+                                    Text(stringResource(id = R.string.settings_profile_template_summary))
+                                },
+                                leadingContent = {
+                                    Icon(Icons.Filled.Fence, profileTemplate)
+                                },
+                                trailingContent = {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        null
+                                    )
+                                }
+                            )
+                        }
                     }
                 )
             )
-
-            val profileTemplate = stringResource(id = R.string.settings_profile_template)
-
-            KsuIsValid {
-                SegmentedColumn(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    content = listOf {
-                        SegmentedListItem(
-                            onClick = actions.onOpenProfileTemplate,
-                            headlineContent = { Text(profileTemplate) },
-                            supportingContent = {
-                                Text(stringResource(id = R.string.settings_profile_template_summary))
-                            },
-                            leadingContent = {
-                                Icon(Icons.Filled.Fence, profileTemplate)
-                            },
-                            trailingContent = {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    null
-                                )
-                            }
-                        )
-                    }
-                )
-            }
 
             KsuIsValid {
                 val suCompatModeItems = listOf(
@@ -302,7 +267,9 @@ fun SettingPagerMaterial(
                             SegmentedListItem(
                                 onClick = { showUninstallDialog.value = true },
                                 enabled = !uiState.isLateLoadMode,
-                                headlineContent = { Text(uninstall) },
+                                headlineContent = {
+                                    Text(uninstall)
+                                },
                                 leadingContent = {
                                     Icon(Icons.Filled.Delete, uninstall)
                                 }
@@ -315,20 +282,6 @@ fun SettingPagerMaterial(
             SegmentedColumn(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 content = listOf(
-                    {
-                        SegmentedListItem(
-                            onClick = { showBottomSheet = true },
-                            headlineContent = {
-                                Text(stringResource(id = R.string.send_log))
-                            },
-                            leadingContent = {
-                                Icon(
-                                    Icons.Filled.BugReport,
-                                    stringResource(id = R.string.send_log)
-                                )
-                            },
-                        )
-                    },
                     {
                         SegmentedListItem(
                             onClick = actions.onOpenAbout,
@@ -348,10 +301,6 @@ fun SettingPagerMaterial(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            if (showBottomSheet) {
-                SendLogBottomSheet { showBottomSheet = false }
-            }
-
             Spacer(modifier = Modifier.height(bottomInnerPadding))
         }
     }
@@ -363,12 +312,16 @@ private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     LargeFlexibleTopAppBar(
-        title = { Text(stringResource(R.string.settings)) },
+        title = {
+            Text(stringResource(R.string.settings))
+        },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
             scrolledContainerColor = MaterialTheme.colorScheme.surface
         ),
-        windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+        windowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+        ),
         scrollBehavior = scrollBehavior
     )
 }

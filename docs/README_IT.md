@@ -1,7 +1,7 @@
 #  🐰 BunnySU
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/khoi2mai/BunnySU/refs/heads/bunnysu-v3.2.4/docs/assets/bunnysu_logo.png" width="96" alt="BunnySU Logo">
+  <img src="https://raw.githubusercontent.com/khoi2mai/BunnySU/refs/heads/bunnysu/docs/assets/bunnysu_logo.png" width="96" alt="BunnySU Logo">
 </p>
 
 <p align="center">

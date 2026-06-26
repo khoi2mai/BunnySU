@@ -1,5 +1,10 @@
 package com.bunny.su.ui.screen.about
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -33,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -86,6 +92,26 @@ fun AboutScreenMaterial(
                         .padding(vertical = 48.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val infiniteTransition = rememberInfiniteTransition()
+
+                    val logoScale = infiniteTransition.animateFloat(
+                        initialValue = 1.00f,
+                        targetValue = 1.08f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 750),
+                            repeatMode = RepeatMode.Reverse
+                        )
+                    )
+
+                    val logoAlpha = infiniteTransition.animateFloat(
+                        initialValue = 0.82f,
+                        targetValue = 1.00f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 750),
+                            repeatMode = RepeatMode.Reverse
+                        )
+                    )
+
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
@@ -96,22 +122,31 @@ fun AboutScreenMaterial(
                         Image(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
                             contentDescription = null,
-                            modifier = Modifier.size(64.dp),
+                            modifier = Modifier
+                                .size(64.dp)
+                                .graphicsLayer {
+                                    scaleX = logoScale.value
+                                    scaleY = logoScale.value
+                                    alpha = logoAlpha.value
+                                },
                             contentScale = ContentScale.Fit
                         )
                     }
+
                     Text(
                         modifier = Modifier.padding(top = 12.dp),
                         text = state.appName,
                         fontWeight = FontWeight.Medium,
                         fontSize = MaterialTheme.typography.headlineMedium.fontSize
                     )
+
                     Text(
                         text = state.versionName,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize
                     )
                 }
             }
+
             item {
                 SegmentedColumn(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -124,6 +159,7 @@ fun AboutScreenMaterial(
                         }
                     }
                 )
+
                 Spacer(
                     Modifier.height(
                         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +

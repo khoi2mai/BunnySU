@@ -2,7 +2,7 @@ name: Build Manager
 
 on:
   push:
-    branches: [ "main", "dev", "ci", "bunnysu-v3.2.4" ]
+    branches: [ "main", "dev", "ci", "bunnysu" ]
     paths:
       - '.github/workflows/build-manager.yml'
       - '.github/workflows/build-lkm.yml'
@@ -17,7 +17,7 @@ on:
       - 'userspace/**'
 
   pull_request:
-    branches: [ "main", "dev", "bunnysu-v3.2.4" ]
+    branches: [ "main", "dev", "bunnysu" ]
     paths:
       - '.github/workflows/build-manager.yml'
       - '.github/workflows/build-lkm.yml'
