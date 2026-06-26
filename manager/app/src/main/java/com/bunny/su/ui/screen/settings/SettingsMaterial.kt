@@ -257,6 +257,26 @@ fun SettingPagerMaterial(
                 )
             }
 
+            SegmentedColumn(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                content = listOf(
+                    {
+                        SegmentedListItem(
+                            onClick = actions.onOpenAbout,
+                            headlineContent = {
+                                Text(stringResource(id = R.string.about))
+                            },
+                            leadingContent = {
+                                Icon(
+                                    Icons.Filled.ContactPage,
+                                    stringResource(id = R.string.about)
+                                )
+                            },
+                        )
+                    }
+                )
+            )
+
             if (uiState.isLkmMode) {
                 SegmentedColumn(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -278,26 +298,6 @@ fun SettingPagerMaterial(
                     )
                 )
             }
-
-            SegmentedColumn(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                content = listOf(
-                    {
-                        SegmentedListItem(
-                            onClick = actions.onOpenAbout,
-                            headlineContent = {
-                                Text(stringResource(id = R.string.about))
-                            },
-                            leadingContent = {
-                                Icon(
-                                    Icons.Filled.ContactPage,
-                                    stringResource(id = R.string.about)
-                                )
-                            },
-                        )
-                    }
-                )
-            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
