@@ -1,56 +1,179 @@
-[English](README.md) | [Español](README_ES.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [日本語](README_JP.md) | [한국어](README_KR.md) | [Polski](README_PL.md) | [Português (Brasil)](README_PT-BR.md) | [Türkçe](README_TR.md) | [Русский](README_RU.md) | **Tiếng Việt** | [Indonesia](README_ID.md) | [עברית](README_IW.md) | [हिंदी](README_IN.md) | [Italiano](README_IT.md)
+#  🐰 BunnySU
 
-# KernelSU
+<p align="center">
+  <img src="https://raw.githubusercontent.com/khoi2mai/BunnySU/refs/heads/bunnysu-v3.2.4/docs/assets/bunnysu_logo.png" width="96" alt="BunnySU Logo">
+</p>
 
-<img src="https://kernelsu.org/logo.png" style="width: 96px;" alt="logo">
+<p align="center">
+  <strong>Giải pháp root hiện đại dựa trên kernel dành cho thiết bị Android.</strong>
+</p>
 
-Giải pháp root thông qua thay đổi trên Kernel hệ điều hành cho các thiết bị Android.
+<p align="center">
+  <a href="https://github.com/khoi2mai/BunnySU/releases/latest">
+    <img src="https://img.shields.io/github/v/release/khoi2mai/BunnySU?label=Release&logo=github" alt="Latest Release">
+  </a>
+  <a href="/LICENSE">
+    <img src="https://img.shields.io/github/license/khoi2mai/BunnySU?logo=gnu" alt="License">
+  </a>
+  <a href="https://t.me/KernelSU">
+    <img src="https://img.shields.io/badge/Telegram-Community-blue?logo=telegram" alt="Telegram">
+  </a>
+</p>
 
-[![Latest release](https://img.shields.io/github/v/release/khoi2mai/BunnySU?label=Release&logo=github)](https://github.com/khoi2mai/BunnySU/releases/latest)
-[![Weblate](https://img.shields.io/badge/Localization-Weblate-teal?logo=weblate)](https://hosted.weblate.org/engage/kernelsu)
-[![Channel](https://img.shields.io/badge/Follow-Telegram-blue.svg?logo=telegram)](https://t.me/KernelSU)
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange.svg?logo=gnu)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![GitHub License](https://img.shields.io/github/license/khoi2mai/BunnySU?logo=gnu)](/LICENSE)
+<p align="center">
+  <a href="README.md">English</a> |
+  <a href="README_ES.md">Español</a> |
+  <a href="README_CN.md">简体中文</a> |
+  <a href="README_TW.md">繁體中文</a> |
+  <a href="README_JP.md">日本語</a> |
+  <a href="README_KR.md">한국어</a> |
+  <a href="README_PL.md">Polski</a> |
+  <a href="README_PT-BR.md">Português</a> |
+  <a href="README_TR.md">Türkçe</a> |
+  <a href="README_RU.md">Русский</a> |
+  <a href="README_VI.md">Tiếng Việt</a> |
+  <a href="README_ID.md">Indonesia</a> |
+  <a href="README_IN.md">हिन्दी</a> |
+  <a href="README_IT.md">Italiano</a> |
+  <a href="README_IW.md">עברית</a>
+</p>
+
+---
+
+## Tổng quan
+
+BunnySU là một giải pháp root cấp kernel được thiết kế cho các thiết bị Android.
+Nó cung cấp khả năng quản lý quyền root mạnh mẽ trực tiếp từ lớp kernel, mang lại trải nghiệm sạch, hiệu quả và systemless cho người dùng nâng cao, nhà phát triển và người yêu thích Android.
+
+Khác với các giải pháp root truyền thống chỉ hoạt động ở userspace, BunnySU tích hợp với kernel để mang lại khả năng kiểm soát sâu hơn, cách ly mạnh hơn và quản lý quyền linh hoạt hơn.
+
+---
 
 ## Tính năng
 
-1. Hỗ trợ gói thực thi `su` và quản lý quyền root.
-2. Hệ thống mô-đun thông qua [metamodules](https://kernelsu.org/vi_VN/guide/metamodule.html): Cơ sở hạ tầng có thể cắm cho các sửa đổi systemless.
-3. [App Profile](https://kernelsu.org/guide/app-profile.html): Hạn chế quyền root của ứng dụng.
+* **Quyền root dựa trên kernel**
+  Cung cấp hỗ trợ `su` trực tiếp thông qua Android kernel.
 
-## Tình trạng tương thích
+* **Quản lý quyền root**
+  Kiểm soát ứng dụng nào có thể truy cập root bằng một hệ thống quyền rõ ràng và dễ quản lý.
 
-KernelSU chính thức hỗ trợ các thiết bị Android với kernel GKI 2.0 (phiên bản kernel 5.10+), các phiên bản kernel cũ hơn (4.14+) cũng tương thích, nhưng bạn cần phải tự biên dịch.
+* **Hỗ trợ module systemless**
+  Hỗ trợ các thay đổi dựa trên module mà không cần sửa trực tiếp phân vùng system.
 
-WSA, ChromeOS và Android dựa trên container(container-based) cũng được hỗ trợ bởi KernelSU.
+* **Điều khiển App Profile**
+  Giới hạn, cách ly hoặc tùy chỉnh hành vi root cho từng ứng dụng riêng lẻ.
 
-Hiện tại, các kiến trúc `arm64-v8a` và `x86_64` được hỗ trợ.
+* **Hỗ trợ GKI**
+  Được thiết kế cho các thiết bị Android hiện đại sử dụng kiến trúc Generic Kernel Image.
+
+* **Khả năng tương thích nâng cao**
+  Hỗ trợ điện thoại Android, WSA, ChromeOS và các môi trường Android dựa trên container.
+
+---
+
+## Tương thích
+
+BunnySU chính thức hướng tới các thiết bị Android sử dụng **GKI 2.0** với kernel **5.10 hoặc mới hơn**.
+
+Kernel cũ hơn cũng có thể hoạt động, nhưng thường cần tích hợp kernel thủ công và build riêng cho từng thiết bị.
+
+### Kiến trúc được hỗ trợ
+
+* `arm64-v8a`
+* `x86_64`
 
 > [!CAUTION]
-> Các phiên bản kernel gần đây đã áp dụng một thay đổi lớn có thể khiến KernelSU gặp lỗi và có khả năng gây ra kernel panic trên `x86_64`! Hãy kiểm tra trang web để biết thêm thông tin!
+> Một số thay đổi kernel gần đây có thể ảnh hưởng đến khả năng tương thích trên một số thiết bị `x86_64` và có thể gây lỗi boot hoặc kernel panic.
+> Luôn kiểm tra thông tin riêng của thiết bị trước khi flash hoặc build.
 
-## Sử dụng
+---
 
-- [Hướng dẫn cài đặt](https://kernelsu.org/vi_VN/guide/installation.html)
-- [Cách để build?](https://kernelsu.org/vi_VN/guide/how-to-build.html)
-- [Website Chính Thức](https://kernelsu.org/vi_VN/)
+## Cài đặt
 
-## Hỗ trợ dịch
+Vui lòng đọc hướng dẫn cài đặt chính thức trước khi sử dụng BunnySU.
 
-Nếu bạn muốn hỗ trợ dịch KernelSU sang một ngôn ngữ khác hoặc cải thiện các bản dịch trước, vui lòng sử dụng [Weblate](https://hosted.weblate.org/engage/kernelsu/).
+* [Installation Guide](https://kernelsu.org/guide/installation.html)
+* [How to Build](https://kernelsu.org/guide/how-to-build.html)
+* [Official Website](https://kernelsu.org/)
 
-## Thảo luận
+> [!WARNING]
+> Root và chỉnh sửa kernel có thể gây lỗi boot, mất dữ liệu hoặc khiến thiết bị không ổn định nếu thực hiện sai.
+> Hãy chắc chắn rằng bạn hiểu rủi ro và có bản sao lưu đầy đủ trước khi tiếp tục.
 
-- Telegram: [@KernelSU](https://t.me/KernelSU)
+---
+
+## Build
+
+BunnySU có thể được tích hợp vào các Android kernel được hỗ trợ và build thủ công.
+
+Để xem hướng dẫn build chi tiết, vui lòng tham khảo:
+
+* [Build Documentation](https://kernelsu.org/guide/how-to-build.html)
+
+Maintainer của thiết bị nên đảm bảo kernel source, defconfig và môi trường build đã được cấu hình đúng trước khi tích hợp.
+
+---
+
+## Hệ thống module
+
+BunnySU hỗ trợ hệ thống module systemless dựa trên metamodules.
+
+Module có thể được dùng để thay đổi hành vi hệ thống, thêm tính năng hoặc tùy chỉnh môi trường Android mà không cần sửa trực tiếp phân vùng system.
+
+Tìm hiểu thêm:
+
+* [Metamodule Documentation](https://kernelsu.org/guide/metamodule.html)
+
+---
+
+## App Profile
+
+App Profile cho phép kiểm soát chi tiết quyền root và hành vi của ứng dụng.
+
+Với App Profile, người dùng có thể giới hạn quyền root, tùy chỉnh đặc quyền và giảm việc lộ không cần thiết các khả năng root nhạy cảm.
+
+Tìm hiểu thêm:
+
+* [App Profile Documentation](https://kernelsu.org/guide/app-profile.html)
+
+---
+
+## Bảo mật
+
+BunnySU hoạt động ở tầng thấp của hệ thống Android.
+Vui lòng báo cáo vấn đề bảo mật một cách có trách nhiệm và tránh công khai lỗ hổng trước khi chúng được xem xét.
+
+Thông tin liên quan đến bảo mật:
+
+* [Security Policy](SECURITY.md)
+
+---
 
 ## Giấy phép
 
-- Tất cả các file trong thư mục `kernel` dùng giấy phép [GPL-2-only](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
-- Tất cả các thành phần khác ngoại trừ thư mục `kernel` dùng giấy phép [GPL-3-or-later](https://www.gnu.org/licenses/gpl-3.0.html).
+BunnySU tuân theo cấu trúc giấy phép gốc của KernelSU:
 
-## Lời cảm ơn
+* Các file trong thư mục `kernel` được cấp phép theo **GPL-2.0-only**.
+* Các phần khác của dự án được cấp phép theo **GPL-3.0-or-later**, trừ khi có ghi chú khác.
 
-- [kernel-assisted-superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/): ý tưởng cho KernelSU.
-- [Magisk](https://github.com/topjohnwu/Magisk): công cụ root mạnh mẽ.
-- [genuine](https://github.com/brevent/genuine/): phương pháp xác thực apk v2.
-- [Diamorphine](https://github.com/m0nad/Diamorphine): các phương pháp ẩn của rootkit.
+Xem file [LICENSE](LICENSE) để biết thêm chi tiết.
+
+---
+
+## Credits
+
+BunnySU được truyền cảm hứng từ và xây dựng dựa trên công sức của cộng đồng Android root và phát triển kernel.
+
+Đặc biệt cảm ơn:
+
+* [Kernel-Assisted Superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/)
+* [Magisk](https://github.com/topjohnwu/Magisk)
+* [genuine](https://github.com/brevent/genuine/)
+* [Diamorphine](https://github.com/m0nad/Diamorphine)
+
+---
+
+<p align="center">
+  <strong>BunnySU</strong><br>
+  Quyền root cấp kernel cho các thiết bị Android hiện đại.
+</p>

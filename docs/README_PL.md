@@ -1,58 +1,179 @@
-[English](README.md) | [Español](README_ES.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [日本語](README_JP.md) | [한국어](README_KR.md) | **Polski** | [Português (Brasil)](README_PT-BR.md) | [Türkçe](README_TR.md) | [Русский](README_RU.md) | [Tiếng Việt](README_VI.md) | [Indonesia](README_ID.md) | [עברית](README_IW.md) | [हिंदी](README_IN.md) | [Italiano](README_IT.md)
+#  🐰 BunnySU
 
-# KernelSU
+<p align="center">
+  <img src="https://raw.githubusercontent.com/khoi2mai/BunnySU/refs/heads/bunnysu-v3.2.4/docs/assets/bunnysu_logo.png" width="96" alt="BunnySU Logo">
+</p>
 
-<img src="https://kernelsu.org/logo.png" style="width: 96px;" alt="logo">
+<p align="center">
+  <strong>Nowoczesne rozwiązanie root oparte na kernelu dla urządzeń Android.</strong>
+</p>
 
-Rozwiązanie root oparte na jądrze dla urządzeń z systemem Android.
+<p align="center">
+  <a href="https://github.com/khoi2mai/BunnySU/releases/latest">
+    <img src="https://img.shields.io/github/v/release/khoi2mai/BunnySU?label=Release&logo=github" alt="Latest Release">
+  </a>
+  <a href="/LICENSE">
+    <img src="https://img.shields.io/github/license/khoi2mai/BunnySU?logo=gnu" alt="License">
+  </a>
+  <a href="https://t.me/KernelSU">
+    <img src="https://img.shields.io/badge/Telegram-Community-blue?logo=telegram" alt="Telegram">
+  </a>
+</p>
 
-[![Latest release](https://img.shields.io/github/v/release/khoi2mai/BunnySU?label=Release&logo=github)](https://github.com/khoi2mai/BunnySU/releases/latest)
-[![Weblate](https://img.shields.io/badge/Localization-Weblate-teal?logo=weblate)](https://hosted.weblate.org/engage/kernelsu)
-[![Channel](https://img.shields.io/badge/Follow-Telegram-blue.svg?logo=telegram)](https://t.me/KernelSU)
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange.svg?logo=gnu)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![GitHub License](https://img.shields.io/github/license/khoi2mai/BunnySU?logo=gnu)](/LICENSE)
+<p align="center">
+  <a href="README.md">English</a> |
+  <a href="README_ES.md">Español</a> |
+  <a href="README_CN.md">简体中文</a> |
+  <a href="README_TW.md">繁體中文</a> |
+  <a href="README_JP.md">日本語</a> |
+  <a href="README_KR.md">한국어</a> |
+  <a href="README_PL.md">Polski</a> |
+  <a href="README_PT-BR.md">Português</a> |
+  <a href="README_TR.md">Türkçe</a> |
+  <a href="README_RU.md">Русский</a> |
+  <a href="README_VI.md">Tiếng Việt</a> |
+  <a href="README_ID.md">Indonesia</a> |
+  <a href="README_IN.md">हिन्दी</a> |
+  <a href="README_IT.md">Italiano</a> |
+  <a href="README_IW.md">עברית</a>
+</p>
 
-## Cechy
+---
 
-1. Oparte na jądrze `su` i zarządzanie dostępem roota.
-2. System modułów oparty na [metamodules](https://kernelsu.org/guide/metamodule.html): Wtykowa infrastruktura dla modyfikacji systemless.
+## Przegląd
+
+BunnySU to rozwiązanie root na poziomie kernela zaprojektowane dla urządzeń Android.
+Zapewnia zaawansowane zarządzanie dostępem root bezpośrednio z warstwy kernela, oferując czyste, wydajne i systemless doświadczenie dla zaawansowanych użytkowników, deweloperów i entuzjastów Androida.
+
+W przeciwieństwie do tradycyjnych rozwiązań root działających wyłącznie w userspace, BunnySU integruje się z kernelem, aby zapewnić głębszą kontrolę, mocniejszą izolację i bardziej elastyczne zarządzanie uprawnieniami.
+
+---
+
+## Funkcje
+
+* **Dostęp root oparty na kernelu**
+  Zapewnia obsługę `su` bezpośrednio przez kernel Androida.
+
+* **Zarządzanie uprawnieniami root**
+  Kontroluj, które aplikacje mogą uzyskać dostęp root, za pomocą przejrzystego i łatwego w zarządzaniu systemu uprawnień.
+
+* **Obsługa modułów systemless**
+  Obsługuje modyfikacje oparte na modułach bez bezpośredniej zmiany partycji systemowej.
+
+* **Kontrola App Profile**
+  Ograniczaj, izoluj lub dostosowuj zachowanie root dla poszczególnych aplikacji.
+
+* **Obsługa GKI**
+  Zaprojektowany dla nowoczesnych urządzeń Android korzystających z architektury Generic Kernel Image.
+
+* **Zaawansowana kompatybilność**
+  Obsługuje telefony Android, WSA, ChromeOS oraz środowiska Android oparte na kontenerach.
+
+---
 
 ## Kompatybilność
 
-KernelSU oficjalnie obsługuje urządzenia z Androidem GKI 2.0 (z jądrem 5.10+), starsze jądra (4.14+) są również kompatybilne, ale musisz sam skompilować jądro.
+BunnySU oficjalnie celuje w urządzenia Android używające **GKI 2.0** z kernelem **5.10 lub nowszym**.
 
-WSA i Android oparty na kontenerach również powinny działać ze zintegrowanym KernelSU.
+Starsze kernele również mogą działać, ale zwykle wymagają ręcznej integracji z kernelem i buildów specyficznych dla urządzenia.
 
-Obecnie obsługiwane są architektury `arm64-v8a` oraz `x86_64`.
+### Obsługiwane architektury
+
+* `arm64-v8a`
+* `x86_64`
 
 > [!CAUTION]
-> Nowsze wersje jądra wprowadzają zmianę, która powoduje awarię KernelSU i może wywołać kernel panic na `x86_64`! Sprawdź stronę internetową po więcej informacji!
+> Niektóre ostatnie zmiany w kernelu mogą wpływać na kompatybilność na wybranych urządzeniach `x86_64` i powodować problemy z uruchamianiem lub kernel panic.
+> Zawsze sprawdzaj informacje specyficzne dla urządzenia przed flashowaniem lub budowaniem.
 
-## Użycie
+---
 
-- [Instalacja](https://kernelsu.org/guide/installation.html)
-- [Jak skompilować?](https://kernelsu.org/guide/how-to-build.html)
+## Instalacja
 
-## Tłumaczenie
+Przed użyciem BunnySU przeczytaj oficjalny przewodnik instalacji.
 
-Aby pomóc w tłumaczeniu KernelSU lub ulepszyć istniejące tłumaczenia, użyj [Weblate](https://hosted.weblate.org/engage/kernelsu/). PR tłumaczenia Managera nie jest już akceptowany, ponieważ będzie kolidował z Weblate.
+* [Installation Guide](https://kernelsu.org/guide/installation.html)
+* [How to Build](https://kernelsu.org/guide/how-to-build.html)
+* [Official Website](https://kernelsu.org/)
 
-## Dyskusja
+> [!WARNING]
+> Rootowanie i modyfikowanie kernela może spowodować brak możliwości uruchomienia, utratę danych lub niestabilność urządzenia, jeśli zostanie wykonane nieprawidłowo.
+> Upewnij się, że rozumiesz ryzyko i wykonaj pełną kopię zapasową przed kontynuacją.
 
-- Telegram: [@KernelSU](https://t.me/KernelSU)
+---
+
+## Budowanie
+
+BunnySU można zintegrować z obsługiwanymi kernelami Androida i zbudować ręcznie.
+
+Szczegółowe instrukcje budowania znajdziesz tutaj:
+
+* [Build Documentation](https://kernelsu.org/guide/how-to-build.html)
+
+Maintainerzy urządzeń powinni upewnić się, że źródła kernela, defconfig i środowisko build są poprawnie skonfigurowane przed integracją.
+
+---
+
+## System modułów
+
+BunnySU obsługuje system modułów systemless oparty na metamodules.
+
+Moduły mogą być używane do modyfikowania zachowania systemu, dodawania funkcji lub dostosowywania środowiska Android bez bezpośredniej zmiany partycji systemowej.
+
+Dowiedz się więcej:
+
+* [Metamodule Documentation](https://kernelsu.org/guide/metamodule.html)
+
+---
+
+## App Profile
+
+App Profile umożliwia szczegółową kontrolę nad uprawnieniami root i zachowaniem aplikacji.
+
+Dzięki App Profile użytkownicy mogą ograniczać dostęp root, dostosowywać uprawnienia i zmniejszać niepotrzebne narażenie wrażliwych możliwości root.
+
+Dowiedz się więcej:
+
+* [App Profile Documentation](https://kernelsu.org/guide/app-profile.html)
+
+---
 
 ## Bezpieczeństwo
 
-Informacje na temat zgłaszania luk w zabezpieczeniach w KernelSU można znaleźć w pliku [SECURITY.md](/SECURITY.md).
+BunnySU działa na niskim poziomie systemu Android.
+Zgłaszaj problemy bezpieczeństwa odpowiedzialnie i unikaj publicznego ujawniania podatności przed ich przejrzeniem.
+
+Informacje związane z bezpieczeństwem:
+
+* [Security Policy](SECURITY.md)
+
+---
 
 ## Licencja
 
-- Pliki w katalogu `kernel` są na licencji [GPL-2-only](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
-- Wszystkie inne części poza katalogiem `kernel` są na licencji [GPL-3-or-later](https://www.gnu.org/licenses/gpl-3.0.html).
+BunnySU zachowuje oryginalną strukturę licencjonowania KernelSU:
+
+* Pliki w katalogu `kernel` są licencjonowane na **GPL-2.0-only**.
+* Pozostałe części projektu są licencjonowane na **GPL-3.0-or-later**, chyba że wskazano inaczej.
+
+Więcej informacji znajdziesz w pliku [LICENSE](LICENSE).
+
+---
 
 ## Podziękowania
 
-- [kernel-assisted-superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/): pomysłodawca KernelSU.
-- [Magisk](https://github.com/topjohnwu/Magisk): implementacja sepolicy.
-- [genuine](https://github.com/brevent/genuine/): walidacja podpisu apk v2.
-- [Diamorphine](https://github.com/m0nad/Diamorphine): cenna znajomość rootkitów.
+BunnySU jest inspirowany pracą społeczności Android root i kernel development oraz na niej zbudowany.
+
+Specjalne podziękowania dla:
+
+* [Kernel-Assisted Superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/)
+* [Magisk](https://github.com/topjohnwu/Magisk)
+* [genuine](https://github.com/brevent/genuine/)
+* [Diamorphine](https://github.com/m0nad/Diamorphine)
+
+---
+
+<p align="center">
+  <strong>BunnySU</strong><br>
+  Dostęp root na poziomie kernela dla nowoczesnych urządzeń Android.
+</p>

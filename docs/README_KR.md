@@ -1,60 +1,179 @@
-[English](README.md) | [Español](README_ES.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [日本語](README_JP.md) | **한국어** | [Polski](README_PL.md) | [Português (Brasil)](README_PT-BR.md) | [Türkçe](README_TR.md) | [Русский](README_RU.md) | [Tiếng Việt](README_VI.md) | [Indonesia](README_ID.md) | [עברית](README_IW.md) | [हिंदी](README_IN.md) | [Italiano](README_IT.md)
+#  🐰 BunnySU
 
-# KernelSU
+<p align="center">
+  <img src="https://raw.githubusercontent.com/khoi2mai/BunnySU/refs/heads/bunnysu-v3.2.4/docs/assets/bunnysu_logo.png" width="96" alt="BunnySU Logo">
+</p>
 
-<img src="https://kernelsu.org/logo.png" style="width: 96px;" alt="logo">
+<p align="center">
+  <strong>Android 기기를 위한 최신 kernel-based root 솔루션.</strong>
+</p>
 
-안드로이드 기기에서 사용되는 커널 기반 루팅 솔루션입니다.
+<p align="center">
+  <a href="https://github.com/khoi2mai/BunnySU/releases/latest">
+    <img src="https://img.shields.io/github/v/release/khoi2mai/BunnySU?label=Release&logo=github" alt="Latest Release">
+  </a>
+  <a href="/LICENSE">
+    <img src="https://img.shields.io/github/license/khoi2mai/BunnySU?logo=gnu" alt="License">
+  </a>
+  <a href="https://t.me/KernelSU">
+    <img src="https://img.shields.io/badge/Telegram-Community-blue?logo=telegram" alt="Telegram">
+  </a>
+</p>
 
-[![Latest release](https://img.shields.io/github/v/release/khoi2mai/BunnySU?label=Release&logo=github)](https://github.com/khoi2mai/BunnySU/releases/latest)
-[![Weblate](https://img.shields.io/badge/Localization-Weblate-teal?logo=weblate)](https://hosted.weblate.org/engage/kernelsu)
-[![Channel](https://img.shields.io/badge/Follow-Telegram-blue.svg?logo=telegram)](https://t.me/KernelSU)
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange.svg?logo=gnu)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![GitHub License](https://img.shields.io/github/license/khoi2mai/BunnySU?logo=gnu)](/LICENSE)
+<p align="center">
+  <a href="README.md">English</a> |
+  <a href="README_ES.md">Español</a> |
+  <a href="README_CN.md">简体中文</a> |
+  <a href="README_TW.md">繁體中文</a> |
+  <a href="README_JP.md">日本語</a> |
+  <a href="README_KR.md">한국어</a> |
+  <a href="README_PL.md">Polski</a> |
+  <a href="README_PT-BR.md">Português</a> |
+  <a href="README_TR.md">Türkçe</a> |
+  <a href="README_RU.md">Русский</a> |
+  <a href="README_VI.md">Tiếng Việt</a> |
+  <a href="README_ID.md">Indonesia</a> |
+  <a href="README_IN.md">हिन्दी</a> |
+  <a href="README_IT.md">Italiano</a> |
+  <a href="README_IW.md">עברית</a>
+</p>
 
-## 기능들
+---
 
-1. 커널 기반 `su` 및 루트 액세스 관리.
-2. [metamodules](https://kernelsu.org/guide/metamodule.html) 기반 모듈 시스템: 플러그인 가능한 시스템리스 수정 인프라.
-3. [App Profile](https://kernelsu.org/guide/app-profile.html): 루트 권한을 케이지에 가둡니다.
+## 개요
 
-## 호환 상태
+BunnySU는 Android 기기를 위해 설계된 kernel-level root 솔루션입니다.
+kernel layer에서 직접 강력한 root access management를 제공하여 advanced users, developers, Android enthusiasts에게 clean, efficient, systemless 경험을 제공합니다.
 
-KernelSU는 공식적으로 안드로이드 GKI 2.0 디바이스(커널 5.10 이상)를 지원합니다. 오래된 커널(4.14 이상)도 사용할 수 있지만, 커널을 수동으로 빌드해야 합니다.
+기존의 userspace-only root solutions와 달리 BunnySU는 kernel과 통합되어 더 깊은 제어, 더 강력한 격리, 더 유연한 permission management를 제공합니다.
 
-KernelSU는 WSA, ChromeOS, 컨테이너 기반 안드로이드 모두를 지원합니다.
+---
 
-현재 `arm64-v8a` 및 `x86_64` 아키텍처가 지원됩니다.
+## 기능
+
+* **Kernel-based root access**
+  Android kernel을 통해 직접 `su` support를 제공합니다.
+
+* **Root permission management**
+  명확하고 관리하기 쉬운 permission system으로 어떤 apps가 root에 접근할 수 있는지 제어합니다.
+
+* **Systemless module support**
+  system partition을 직접 수정하지 않고 module-based modifications를 지원합니다.
+
+* **App Profile control**
+  개별 apps에 대해 root behavior를 제한, 격리 또는 사용자 지정할 수 있습니다.
+
+* **GKI support**
+  Generic Kernel Image architecture를 사용하는 modern Android devices를 위해 설계되었습니다.
+
+* **Advanced compatibility**
+  Android phones, WSA, ChromeOS, container-based Android environments를 지원합니다.
+
+---
+
+## 호환성
+
+BunnySU는 공식적으로 **GKI 2.0** 및 kernel **5.10 이상**을 사용하는 Android 기기를 대상으로 합니다.
+
+Older kernels도 동작할 수 있지만, 일반적으로 manual kernel integration과 device-specific builds가 필요합니다.
+
+### 지원 아키텍처
+
+* `arm64-v8a`
+* `x86_64`
 
 > [!CAUTION]
-> 최신 커널 버전에는 KernelSU가 실패하고 `x86_64`에서 커널 패닉을 일으킬 수 있는 치명적인 변경 사항이 적용되었습니다! 자세한 내용은 웹사이트를 확인하세요!
+> 일부 recent kernel changes는 특정 `x86_64` devices의 호환성에 영향을 줄 수 있으며 boot issues 또는 kernel panic을 유발할 수 있습니다.
+> Flash 또는 build하기 전에 항상 device-specific information을 확인하세요.
 
-## 사용 방법
+---
 
-- [설치 방법](https://kernelsu.org/guide/installation.html)
-- [어떻게 빌드하나요?](https://kernelsu.org/guide/how-to-build.html)
-- [공식 웹사이트](https://kernelsu.org/)
+## 설치
 
-## 번역
+BunnySU를 사용하기 전에 official installation guide를 읽어 주세요.
 
-KernelSU 번역을 돕거나 기존 번역을 개선하려면 [Weblate](https://hosted.weblate.org/engage/kernelsu/)를 이용해 주세요. 매니저의 번역은 Weblate와 충돌할 수 있으므로 더 이상 허용되지 않습니다.
+* [Installation Guide](https://kernelsu.org/guide/installation.html)
+* [How to Build](https://kernelsu.org/guide/how-to-build.html)
+* [Official Website](https://kernelsu.org/)
 
-## 토론
+> [!WARNING]
+> Rooting 및 kernel modification을 잘못 수행하면 boot failure, data loss 또는 device instability가 발생할 수 있습니다.
+> 진행하기 전에 위험을 이해하고 full backup을 보관하세요.
 
-- 텔레그램: [@KernelSU](https://t.me/KernelSU)
+---
 
-## 보안
+## 빌드
 
-KernelSU의 보안 취약점 보고에 대한 자세한 내용은 [SECURITY.md](/SECURITY.md)를 참조하세요.
+BunnySU는 supported Android kernels에 통합하여 manually build할 수 있습니다.
 
-## 저작권
+자세한 build instructions는 다음을 참조하세요.
 
-- `kernel` 디렉터리 아래의 파일은 [GPL-2.0 전용](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)입니다.
-- `kernel` 디렉토리를 제외한 다른 모든 부분은 [GPL-3.0-이상](https://www.gnu.org/licenses/gpl-3.0.html)입니다.
+* [Build Documentation](https://kernelsu.org/guide/how-to-build.html)
 
-## 크래딧
+Device maintainers는 integration 전에 kernel source, defconfig, build environment가 올바르게 구성되어 있는지 확인해야 합니다.
 
-- [kernel-assisted-superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/): KernelSU의 아이디어.
-- [Magisk](https://github.com/topjohnwu/Magisk): 강력한 루팅 도구.
-- [genuine](https://github.com/brevent/genuine/): apk v2 서명 유효성 검사.
-- [Diamorphine](https://github.com/m0nad/Diamorphine): 일부 rootkit 스킬.
+---
+
+## Module System
+
+BunnySU는 metamodules 기반의 systemless module system을 지원합니다.
+
+Modules는 system partition을 직접 변경하지 않고 system behavior를 수정하거나 features를 추가하거나 Android environment를 사용자 지정하는 데 사용할 수 있습니다.
+
+자세히 알아보기:
+
+* [Metamodule Documentation](https://kernelsu.org/guide/metamodule.html)
+
+---
+
+## App Profile
+
+App Profile은 root permissions와 app behavior를 세밀하게 제어할 수 있게 해줍니다.
+
+App Profile을 통해 users는 root access를 제한하고 privileges를 사용자 지정하며 sensitive root capabilities의 불필요한 노출을 줄일 수 있습니다.
+
+자세히 알아보기:
+
+* [App Profile Documentation](https://kernelsu.org/guide/app-profile.html)
+
+---
+
+## Security
+
+BunnySU는 Android system의 낮은 수준에서 동작합니다.
+Security issues는 책임감 있게 report하고, vulnerabilities가 검토되기 전에 공개적으로 disclosed하지 마세요.
+
+Security-related information은 다음을 참조하세요.
+
+* [Security Policy](SECURITY.md)
+
+---
+
+## License
+
+BunnySU는 original KernelSU licensing structure를 따릅니다.
+
+* `kernel` directory 아래의 files는 **GPL-2.0-only**로 라이선스됩니다.
+* Project의 다른 부분은 별도로 명시되지 않는 한 **GPL-3.0-or-later**로 라이선스됩니다.
+
+자세한 내용은 [LICENSE](LICENSE) file을 참조하세요.
+
+---
+
+## Credits
+
+BunnySU는 Android root 및 kernel development community의 작업에서 영감을 받고 이를 기반으로 만들어졌습니다.
+
+Special thanks to:
+
+* [Kernel-Assisted Superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/)
+* [Magisk](https://github.com/topjohnwu/Magisk)
+* [genuine](https://github.com/brevent/genuine/)
+* [Diamorphine](https://github.com/m0nad/Diamorphine)
+
+---
+
+<p align="center">
+  <strong>BunnySU</strong><br>
+  Modern Android devices를 위한 kernel-level root access.
+</p>
