@@ -13,7 +13,6 @@
     <string name="module_magisk_conflict">मॉड्यूल बंद कर दिए गए हैं क्योंकि यह मैजिक के साथ टकरा रहे है!</string>
     <string name="module_changelog">क्या बदलाव हुए है</string>
     <string name="selinux_status_permissive">पर्मिसिव</string>
-    <string name="reboot_download">डाउनलोड में रिबूट करें</string>
     <string name="settings_umount_modules_default">डिफ़ॉल्ट रूप से मॉड्यूल अनमाउन्ट करें</string>
     <string name="profile_umount_modules_summary">इस विकल्प को चालू करने से BunnySU को इस एप्लिकेशन के लिए मॉड्यूल द्वारा किसी भी मोडिफाइड फ़ाइल को रिस्टोर करें।</string>
     <string name="profile_namespace_individual">Individual</string>
@@ -33,7 +32,6 @@
     <string name="safe_mode">सेफ मोड</string>
     <string name="require_kernel_version">मैनेजर के ठीक से काम करने के लिए वर्तमान BunnySU वर्जन %1$d बहुत कम है। कृपया वर्जन %2$d या उच्चतर में अपग्रेड करें!</string>
     <string name="reboot_recovery">रिकवरी में रिबूट करें</string>
-    <string name="reboot_userspace">सॉफ्ट रिबूट</string>
     <string name="profile_name">प्रोफाइल का नाम</string>
     <string name="home_support_content">BunnySU मुफ़्त और ओपन सोर्स और हमेशा रहेगा। हालाँकि आप दान देकर हमें दिखा सकते हैं कि आप संरक्षण करते हैं।</string>
     <string name="uninstall">अनइंस्टॉल करें</string>

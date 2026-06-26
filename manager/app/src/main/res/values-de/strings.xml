@@ -10,7 +10,6 @@
     <string name="selinux_status_unknown">Unbekannt</string>
     <string name="selinux_status_enforcing">Erzwingen</string>
     <string name="reboot_bootloader">In den Fastboot-Modus neustarten</string>
-    <string name="reboot_download">In den Download-Modus neustarten</string>
     <string name="reboot_edl">In den EDL-Modus neustarten</string>
     <string name="module_author">Autor</string>
     <string name="about">Über BunnySU</string>
@@ -70,7 +69,7 @@
     <string name="home_kernel">Kernelversion</string>
     <string name="home_fingerprint">Fingerabdruck</string>
     <string name="module_install">Installieren</string>
-    <string name="reboot_userspace">Soft Reboot</string>
+
     <string name="module_uninstall_confirm">Möchtest du wirklich Modul %s deinstallieren?</string>
     <string name="module_uninstall_failed">Deinstallation fehlgeschlagen: %s</string>
     <string name="require_kernel_version">Die aktuelle BunnySU-Version %1$d ist zu alt für diese Manager-Version. Bitte auf Version %2$d oder höher aktualisieren!</string>

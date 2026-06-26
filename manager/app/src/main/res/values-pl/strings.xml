@@ -26,10 +26,8 @@
     <string name="install">Instaluj</string>
     <string name="reboot">Uruchom ponownie</string>
     <string name="settings">Ustawienia</string>
-    <string name="reboot_userspace">Miękki restart</string>
     <string name="reboot_recovery">Restart do trybu Recovery</string>
     <string name="reboot_bootloader">Restart do trybu Fastboot</string>
-    <string name="reboot_download">Restart do trybu Download</string>
     <string name="reboot_edl">Restart do trybu EDL</string>
     <string name="about">Informacje</string>
     <string name="module_uninstall_confirm">Czy na pewno chcesz odinstalować moduł %s?</string>

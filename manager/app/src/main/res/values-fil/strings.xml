@@ -19,8 +19,6 @@
     <string name="module_install">I-install</string>
     <string name="install">I-install</string>
     <string name="reboot">I-reboot</string>
-    <string name="reboot_userspace">I-soft reboot</string>
-    <string name="reboot_download">I-reboot sa Download</string>
     <string name="reboot_edl">I-reboot sa EDL</string>
     <string name="about">Tungkol</string>
     <string name="module_uninstall_confirm">Sigurado ka bang gusto mong i-uninstall ang module na %s?</string>

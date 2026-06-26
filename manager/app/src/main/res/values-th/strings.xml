@@ -9,7 +9,7 @@
     <string name="home_unsupported">ไม่รองรับ</string>
     <string name="selinux_status_enforcing">Enforcing</string>
     <string name="reboot_recovery">รีบูตเข้าสู่โหมดกู้คืน</string>
-    <string name="reboot_userspace">ซอฟต์รีบูต</string>
+
     <string name="home_unsupported_reason">ปัจจุบัน BunnySU รองรับเฉพาะเคอร์เนล GKI เท่านั้น แต่คุณสามารถแพตช์อิมเมจเพื่อให้สามารถใช้งานกับอุปกรณ์ที่มาพร้อม GKI ได้</string>
     <string name="home_kernel">เวอร์ชันเคอร์เนล</string>
     <string name="selinux_status_disabled">ปิดใช้งาน</string>
@@ -29,7 +29,6 @@
     <string name="reboot">รีบูต</string>
     <string name="reboot_bootloader">รีบูตเข้าสู่โหมด Fastboot</string>
     <string name="about">เกี่ยวกับ</string>
-    <string name="reboot_download">รีบูตเข้าสู่โหมด Download</string>
     <string name="reboot_edl">รีบูตเข้าสู่โหมด EDL</string>
     <string name="module_uninstall_success">%s ถอนการติดตั้งสำเร็จ</string>
     <string name="module_uninstall_failed">ถอนการติดตั้ง %s ล้มเหลว</string>

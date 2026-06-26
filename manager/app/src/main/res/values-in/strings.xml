@@ -25,10 +25,8 @@
     <string name="install">Pasang</string>
     <string name="reboot">Mulai ulang</string>
     <string name="settings">Setelan</string>
-    <string name="reboot_userspace">Mulai ulang ruang pengguna</string>
     <string name="reboot_recovery">Mulai ulang ke Recovery</string>
     <string name="reboot_bootloader">Mulai ulang ke Fastboot</string>
-    <string name="reboot_download">Mulai ulang ke Download</string>
     <string name="reboot_edl">Mulai ulang ke EDL</string>
     <string name="about">Tentang</string>
     <string name="module_uninstall_confirm">Yakin ingin menghapus modul %s?</string>

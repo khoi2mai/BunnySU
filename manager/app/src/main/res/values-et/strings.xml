@@ -47,8 +47,6 @@
     <string name="about">Teave</string>
     <string name="module_install">Paigalda</string>
     <string name="settings">Seaded</string>
-    <string name="reboot_userspace">Pehme taaskäivitus</string>
-    <string name="reboot_download">Taaskäivita allalaadimisrežiimi</string>
     <string name="reboot_edl">Taaskäivita EDL-i</string>
     <string name="module_author">Autor</string>
     <string name="module_uninstall_failed">Eemaldamine ebaõnnestus: %s</string>

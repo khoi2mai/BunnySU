@@ -28,12 +28,10 @@
     <string name="install">Installer</string>
     <string name="settings">Paramètres</string>
     <string name="reboot_bootloader">Redémarrer vers le fastboot</string>
-    <string name="reboot_userspace">Redémarrage userspace</string>
     <string name="reboot_recovery">Redémarrer en mode Recovery</string>
     <string name="reboot_edl">Redémarrer en mode EDL</string>
     <string name="about">À propos</string>
     <string name="module_uninstall_success">%s désinstallé</string>
-    <string name="reboot_download">Redémarrer en mode Download</string>
     <string name="module_author">Auteur</string>
     <string name="module_uninstall_confirm">Voulez-vous vraiment désinstaller le module %s ?</string>
     <string name="home_learn_kernelsu">Apprenez à utiliser BunnySU</string>

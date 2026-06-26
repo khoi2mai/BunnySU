@@ -25,10 +25,8 @@
     <string name="install">설치</string>
     <string name="reboot">다시 시작</string>
     <string name="settings">설정</string>
-    <string name="reboot_userspace">빠른 다시 시작</string>
     <string name="reboot_recovery">리커버리로 다시 시작</string>
     <string name="reboot_bootloader">부트로더로 다시 시작</string>
-    <string name="reboot_download">다운로드 모드로 다시 시작</string>
     <string name="reboot_edl">EDL 모드로 다시 시작</string>
     <string name="about">정보</string>
     <string name="module_uninstall_confirm">%s 모듈을 삭제할까요?</string>

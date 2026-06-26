@@ -25,10 +25,8 @@
     <string name="install">Installa</string>
     <string name="reboot">Riavvia</string>
     <string name="settings">Impostazioni</string>
-    <string name="reboot_userspace">Riavvio rapido</string>
     <string name="reboot_recovery">Riavvia in modalità Recovery</string>
     <string name="reboot_bootloader">Riavvia in modalità Fastboot</string>
-    <string name="reboot_download">Riavvia in modalità Download</string>
     <string name="reboot_edl">Riavvia in modalità EDL</string>
     <string name="about">Informazioni</string>
     <string name="module_uninstall_confirm">Sei sicuro di voler disinstallare il modulo %s?</string>

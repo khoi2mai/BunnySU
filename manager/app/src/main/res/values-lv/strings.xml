@@ -30,10 +30,8 @@
     <string name="install">Uzstādīšana</string>
     <string name="reboot">Restartēt</string>
     <string name="settings">Iestatījumi</string>
-    <string name="reboot_userspace">Ātri restartēt</string>
     <string name="reboot_bootloader">Restartēt uz Sāknēšanas režīmu</string>
     <string name="reboot_recovery">Restartēt uz Atkopšanas režīmu</string>
-    <string name="reboot_download">Restartēt uz Lejupielādes režīmu</string>
     <string name="reboot_edl">Restartēt uz EDL režīmu</string>
     <string name="about">Par lietotni</string>
     <string name="module_uninstall_success">%s noņemts</string>

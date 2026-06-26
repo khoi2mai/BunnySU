@@ -25,10 +25,8 @@
     <string name="install">ইনস্টল</string>
     <string name="reboot">রিবুট</string>
     <string name="settings">সেটিংস</string>
-    <string name="reboot_userspace">সফট রিবুট</string>
     <string name="reboot_recovery">রিবুট রিকোভারি</string>
     <string name="reboot_bootloader">রিবুট বুটলোডার</string>
-    <string name="reboot_download">রিবুট ডাউনলোড</string>
     <string name="reboot_edl">রিবুট ইডিএল</string>
     <string name="about">এবাউট</string>
     <string name="module_uninstall_confirm">মডিউল আনইনস্টল নিশ্চিত করুন %s?</string>

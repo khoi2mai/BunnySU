@@ -25,10 +25,8 @@
     <string name="install">Встановити</string>
     <string name="reboot">Перезавантажити</string>
     <string name="settings">Налаштування</string>
-    <string name="reboot_userspace">М\'яке перезавантаження</string>
     <string name="reboot_recovery">Перезавантажити до Recovery</string>
     <string name="reboot_bootloader">Перезавантажити до Fastboot</string>
-    <string name="reboot_download">Перезавантажити до Download</string>
     <string name="reboot_edl">Перезавантажити до EDL</string>
     <string name="about">Про додаток</string>
     <string name="module_uninstall_confirm">Ви впевнені, що хочете видалити модуль %s?</string>

@@ -25,10 +25,8 @@
     <string name="install">Installeren</string>
     <string name="reboot">Herstart</string>
     <string name="settings">Instellingen</string>
-    <string name="reboot_userspace">Soft herstart</string>
     <string name="reboot_recovery">Herstart naar Recovery</string>
     <string name="reboot_bootloader">Herstart naar Fastboot</string>
-    <string name="reboot_download">Herstart om te downloaden</string>
     <string name="reboot_edl">Herstart naar EDL</string>
     <string name="about">Over</string>
     <string name="module_uninstall_confirm">Zeker van het verwijderen van module %s?</string>

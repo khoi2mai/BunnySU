@@ -16,7 +16,6 @@
     <string name="uninstall">Odmesti</string>
     <string name="module_install">Namesti</string>
     <string name="install">Namesti</string>
-    <string name="reboot_userspace">Mehki ponovni zagon</string>
     <string name="reboot_recovery">Ponovni zagon v Recovery</string>
     <string name="reboot_bootloader">Ponovni zagon v Fastboot</string>
     <string name="reboot_edl">Ponovni zagon v EDL</string>
@@ -50,7 +49,6 @@
     <string name="module_failed_to_enable">Napaka pri omogočanju modula: %s</string>
     <string name="reboot">Znova zaženi</string>
     <string name="settings">Nastavitve</string>
-    <string name="reboot_download">Ponovni zagon v Download</string>
     <string name="about">O nas</string>
     <string name="module_version">Verzija</string>
     <string name="module_uninstall_failed">Napaka pri odmeščanju: %s</string>

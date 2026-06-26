@@ -25,10 +25,8 @@
     <string name="install">安裝</string>
     <string name="reboot">重新啟動</string>
     <string name="settings">設定</string>
-    <string name="reboot_userspace">軟重啟</string>
     <string name="reboot_recovery">重新啟動至 Recovery</string>
     <string name="reboot_bootloader">重新啟動至 Fastboot</string>
-    <string name="reboot_download">重新啟動至 Download</string>
     <string name="reboot_edl">重新啟動至 EDL</string>
     <string name="about">關於</string>
     <string name="module_uninstall_confirm">你是否要解除安裝「%s」模組？</string>

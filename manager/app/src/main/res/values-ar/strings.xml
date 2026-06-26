@@ -25,10 +25,8 @@
     <string name="install">تثبيت</string>
     <string name="reboot">إعادة تشغيل</string>
     <string name="settings">الإعدادات</string>
-    <string name="reboot_userspace">إعادة تشغيل سريعة</string>
     <string name="reboot_recovery">إعادة تشغيل إلى وضع Recovery</string>
     <string name="reboot_bootloader">إعادة تشغيل إلى وضع Fastboot</string>
-    <string name="reboot_download">إعادة تشغيل إلى وضع Download</string>
     <string name="reboot_edl">إعادة تشغيل إلى وضع EDL</string>
     <string name="about">من نحن</string>
     <string name="module_uninstall_confirm">هل أنت متأكد أنك تريد إلغاء تثبيت الإضافة %s ?</string>

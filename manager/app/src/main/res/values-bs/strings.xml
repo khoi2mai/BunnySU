@@ -60,9 +60,7 @@
     <string name="reboot_bootloader">Ponovo pokrenite u Pogonski Učitavatelj</string>
     <string name="reboot_recovery">Ponovo pokrenite u Oporavu</string>
     <string name="module_uninstall_success">%s deinstalirana</string>
-    <string name="reboot_userspace">Lagano Ponovo pokretanje</string>
     <string name="module_failed_to_enable">Neuspješno uključivanje module: %s</string>
-    <string name="reboot_download">Ponovo pokrenite u Preuzimanje</string>
     <string name="module_failed_to_disable">Neuspješno isključivanje module: %s</string>
     <string name="reboot_edl">Ponovo pokrenite u EDL</string>
     <string name="module_uninstall_failed">Neuspješna deinstalacija: %s</string>

@@ -25,7 +25,6 @@
     <string name="module">मॉड्यूल</string>
     <string name="module_install">स्थापित करा</string>
     <string name="settings">सेटिंग्ज</string>
-    <string name="reboot_userspace">सॉफ्ट रीबूट</string>
     <string name="about">बद्दल</string>
     <string name="reboot_edl">EDL वर रीबूट करा</string>
     <string name="module_uninstall_confirm">तुमची खात्री आहे की तुम्ही मॉड्यूल %s विस्थापित करू इच्छिता\?</string>
@@ -36,7 +35,6 @@
     <string name="module_version">आवृत्ती</string>
     <string name="module_author">लेखक</string>
     <string name="reboot_recovery">रिकवरी मध्ये रिबुट करा</string>
-    <string name="reboot_download">डाउनलोड करण्यासाठी रीबूट करा</string>
     <string name="send_log">लॉग पाठवा</string>
     <string name="safe_mode">सुरक्षित मोड</string>
     <string name="reboot_to_apply">प्रभावी होण्यासाठी रीबूट करा</string>

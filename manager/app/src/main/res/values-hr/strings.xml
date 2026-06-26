@@ -30,10 +30,8 @@
     <string name="install">Instalirajte</string>
     <string name="reboot">Ponovno pokrenite</string>
     <string name="settings">Postavke</string>
-    <string name="reboot_userspace">Lagano ponovno pokretanje</string>
     <string name="reboot_recovery">Ponovno pokrenite u Oporavu</string>
     <string name="reboot_bootloader">Ponovno pokrenite u Pogonski Učitavalac</string>
-    <string name="reboot_download">Ponovno pokrenite u Preuzimanje</string>
     <string name="reboot_edl">Ponovo pokrenite u EDL</string>
     <string name="about">O</string>
     <string name="module_uninstall_confirm">Jeste li sigurni da želite deinstalirati modulu %s\?</string>

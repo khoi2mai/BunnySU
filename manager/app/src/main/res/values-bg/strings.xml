@@ -29,10 +29,8 @@
     <string name="install">Инсталирай</string>
     <string name="reboot">Рестартирай</string>
     <string name="settings">Настройки</string>
-    <string name="reboot_userspace">Меко рестартиране</string>
     <string name="reboot_recovery">Рестартирай във възстановяване</string>
     <string name="reboot_bootloader">Рестартирай в Booloader</string>
-    <string name="reboot_download">Рестартирай в Download</string>
     <string name="reboot_edl">Рестартирай в EDL</string>
     <string name="about">Относно</string>
     <string name="module_uninstall_confirm">Сигурни ли сте че искате да премахнете модула %s?</string>
