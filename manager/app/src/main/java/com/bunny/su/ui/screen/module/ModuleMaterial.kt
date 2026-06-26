@@ -561,7 +561,8 @@ private fun ModuleShortcutSheet(
                     Image(
                         painter = painterResource(id = R.drawable.ic_launcher_foreground),
                         contentDescription = null,
-                        contentScale = FixedScale(1.5f)
+                        modifier = Modifier.size(82.dp),
+                        contentScale = ContentScale.Fit
                     )
                 }
             }

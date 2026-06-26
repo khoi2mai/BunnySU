@@ -96,7 +96,8 @@ fun AboutScreenMaterial(
                         Image(
                             painter = painterResource(id = R.drawable.ic_launcher_foreground),
                             contentDescription = null,
-                            contentScale = FixedScale(1f)
+                            modifier = Modifier.size(64.dp),
+                            contentScale = ContentScale.Fit
                         )
                     }
                     Text(
