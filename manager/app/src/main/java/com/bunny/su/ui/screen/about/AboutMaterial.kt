@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -120,10 +119,10 @@ fun AboutScreenMaterial(
                             .background(Color.Black)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                            painter = painterResource(id = R.drawable.ic_bunny_su),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(64.dp)
+                                .size(56.dp)
                                 .graphicsLayer {
                                     scaleX = logoScale.value
                                     scaleY = logoScale.value
@@ -136,13 +135,8 @@ fun AboutScreenMaterial(
                     Text(
                         modifier = Modifier.padding(top = 12.dp),
                         text = state.appName,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.Bold,
                         fontSize = MaterialTheme.typography.headlineMedium.fontSize
-                    )
-
-                    Text(
-                        text = state.versionName,
-                        fontSize = MaterialTheme.typography.bodyMedium.fontSize
                     )
                 }
             }

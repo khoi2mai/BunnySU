@@ -271,7 +271,7 @@ fun SettingPagerMaterial(
                                     Icons.Filled.ContactPage,
                                     stringResource(id = R.string.about)
                                 )
-                            },
+                            }
                         )
                     }
                 )
