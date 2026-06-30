@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "Release tag, ví dụ: BunnySU-R1 hoặc v1.0.0"
+        description: "Release tag, ví dụ BunnySU-R1 hoặc v1.0.0"
         required: true
         type: string
 
@@ -26,6 +26,10 @@ jobs:
     needs:
       - build-manager
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      actions: read
 
     steps:
       - name: Download artifacts
@@ -64,6 +68,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: false
           files: |
             manager/*.apk
