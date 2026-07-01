@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> |
+  <a href="README.md">Tiếng Việt</a> |
   <a href="README_ES.md">Español</a> |
   <a href="README_CN.md">简体中文</a> |
   <a href="README_TW.md">繁體中文</a> |
@@ -31,8 +31,11 @@
   <a href="README_PT-BR.md">Português</a> |
   <a href="README_TR.md">Türkçe</a> |
   <a href="README_RU.md">Русский</a> |
-  <a href="README_VI.md">Tiếng Việt</a> |
-  <a href="README_ID.md">Indonesia</a>
+  <a href="README_EN.md">English</a> |
+  <a href="README_ID.md">Indonesia</a> |
+  <a href="README_IN.md">हिन्दी</a> |
+  <a href="README_IT.md">Italiano</a> |
+  <a href="README_IW.md">עברית</a>
 </p>
 
 ---

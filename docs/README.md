@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>A modern kernel-based root solution for Android devices.</strong>
+  <strong>Giải pháp root hiện đại dựa trên kernel dành cho thiết bị Android.</strong>
 </p>
 
 <p align="center">
@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> |
+  <a href="README.md">Tiếng Việt</a> |
   <a href="README_ES.md">Español</a> |
   <a href="README_CN.md">简体中文</a> |
   <a href="README_TW.md">繁體中文</a> |
@@ -31,93 +31,96 @@
   <a href="README_PT-BR.md">Português</a> |
   <a href="README_TR.md">Türkçe</a> |
   <a href="README_RU.md">Русский</a> |
-  <a href="README_VI.md">Tiếng Việt</a> |
-  <a href="README_ID.md">Indonesia</a>
+  <a href="README_EN.md">English</a> |
+  <a href="README_ID.md">Indonesia</a> |
+  <a href="README_IN.md">हिन्दी</a> |
+  <a href="README_IT.md">Italiano</a> |
+  <a href="README_IW.md">עברית</a>
 </p>
 
 ---
 
-## Overview
+## Tổng quan
 
-BunnySU is a kernel-level root solution designed for Android devices.
-It provides powerful root access management directly from the kernel layer, offering a clean, efficient, and systemless experience for advanced users, developers, and Android enthusiasts.
+BunnySU là một giải pháp root cấp kernel được thiết kế cho các thiết bị Android.
+Nó cung cấp khả năng quản lý quyền root mạnh mẽ trực tiếp từ lớp kernel, mang lại trải nghiệm sạch, hiệu quả và systemless cho người dùng nâng cao, nhà phát triển và người yêu thích Android.
 
-Unlike traditional userspace-only root solutions, BunnySU integrates with the kernel to provide deeper control, stronger isolation, and more flexible permission management.
-
----
-
-## Features
-
-* **Kernel-based root access**
-  Provides `su` support directly through the Android kernel.
-
-* **Root permission management**
-  Control which apps can access root with a clear and manageable permission system.
-
-* **Systemless module support**
-  Supports module-based modifications without directly modifying the system partition.
-
-* **App Profile control**
-  Restrict, isolate, or customize root behavior for individual apps.
-
-* **GKI support**
-  Designed for modern Android devices using Generic Kernel Image architecture.
-
-* **Advanced compatibility**
-  Supports Android phones, WSA, ChromeOS, and container-based Android environments.
+Khác với các giải pháp root truyền thống chỉ hoạt động ở userspace, BunnySU tích hợp với kernel để mang lại khả năng kiểm soát sâu hơn, cách ly mạnh hơn và quản lý quyền linh hoạt hơn.
 
 ---
 
-## Compatibility
+## Tính năng
 
-BunnySU officially targets Android devices using **GKI 2.0** with kernel **5.10 or newer**.
+* **Quyền root dựa trên kernel**
+  Cung cấp hỗ trợ `su` trực tiếp thông qua Android kernel.
 
-Older kernels may also work, but they usually require manual kernel integration and device-specific builds.
+* **Quản lý quyền root**
+  Kiểm soát ứng dụng nào có thể truy cập root bằng một hệ thống quyền rõ ràng và dễ quản lý.
 
-### Supported architectures
+* **Hỗ trợ module systemless**
+  Hỗ trợ các thay đổi dựa trên module mà không cần sửa trực tiếp phân vùng system.
+
+* **Điều khiển App Profile**
+  Giới hạn, cách ly hoặc tùy chỉnh hành vi root cho từng ứng dụng riêng lẻ.
+
+* **Hỗ trợ GKI**
+  Được thiết kế cho các thiết bị Android hiện đại sử dụng kiến trúc Generic Kernel Image.
+
+* **Khả năng tương thích nâng cao**
+  Hỗ trợ điện thoại Android, WSA, ChromeOS và các môi trường Android dựa trên container.
+
+---
+
+## Tương thích
+
+BunnySU chính thức hướng tới các thiết bị Android sử dụng **GKI 2.0** với kernel **5.10 hoặc mới hơn**.
+
+Kernel cũ hơn cũng có thể hoạt động, nhưng thường cần tích hợp kernel thủ công và build riêng cho từng thiết bị.
+
+### Kiến trúc được hỗ trợ
 
 * `arm64-v8a`
 * `x86_64`
 
 > [!CAUTION]
-> Some recent kernel changes may affect compatibility on certain `x86_64` devices and could cause boot issues or kernel panic.
-> Always check device-specific information before flashing or building.
+> Một số thay đổi kernel gần đây có thể ảnh hưởng đến khả năng tương thích trên một số thiết bị `x86_64` và có thể gây lỗi boot hoặc kernel panic.
+> Luôn kiểm tra thông tin riêng của thiết bị trước khi flash hoặc build.
 
 ---
 
-## Installation
+## Cài đặt
 
-Please read the official installation guide before using BunnySU.
+Vui lòng đọc hướng dẫn cài đặt chính thức trước khi sử dụng BunnySU.
 
 * [Installation Guide](https://kernelsu.org/guide/installation.html)
 * [How to Build](https://kernelsu.org/guide/how-to-build.html)
 * [Official Website](https://kernelsu.org/)
 
 > [!WARNING]
-> Rooting and modifying the kernel may cause boot failure, data loss, or device instability if done incorrectly.
-> Make sure you understand the risks and keep a full backup before proceeding.
+> Root và chỉnh sửa kernel có thể gây lỗi boot, mất dữ liệu hoặc khiến thiết bị không ổn định nếu thực hiện sai.
+> Hãy chắc chắn rằng bạn hiểu rủi ro và có bản sao lưu đầy đủ trước khi tiếp tục.
 
 ---
 
-## Building
+## Build
 
-BunnySU can be integrated into supported Android kernels and built manually.
+BunnySU có thể được tích hợp vào các Android kernel được hỗ trợ và build thủ công.
 
-For detailed build instructions, please refer to:
+Để xem hướng dẫn build chi tiết, vui lòng tham khảo:
 
 * [Build Documentation](https://kernelsu.org/guide/how-to-build.html)
 
-Device maintainers should ensure their kernel source, defconfig, and build environment are properly configured before integration.
+Maintainer của thiết bị nên đảm bảo kernel source, defconfig và môi trường build đã được cấu hình đúng trước khi tích hợp.
 
 ---
 
-## Module System
+## Hệ thống module
 
-BunnySU supports a systemless module system based on metamodules.
+BunnySU hỗ trợ hệ thống module systemless dựa trên metamodules.
 
-Modules can be used to modify system behavior, add features, or customize the Android environment without directly changing the system partition.
+Module có thể được dùng để thay đổi hành vi hệ thống, thêm tính năng hoặc tùy chỉnh môi trường Android mà không cần sửa trực tiếp phân vùng system.
 
-Learn more:
+Tìm hiểu thêm:
 
 * [Metamodule Documentation](https://kernelsu.org/guide/metamodule.html)
 
@@ -125,43 +128,43 @@ Learn more:
 
 ## App Profile
 
-App Profile allows fine-grained control over root permissions and app behavior.
+App Profile cho phép kiểm soát chi tiết quyền root và hành vi của ứng dụng.
 
-With App Profile, users can limit root access, customize privileges, and reduce unnecessary exposure of sensitive root capabilities.
+Với App Profile, người dùng có thể giới hạn quyền root, tùy chỉnh đặc quyền và giảm việc lộ không cần thiết các khả năng root nhạy cảm.
 
-Learn more:
+Tìm hiểu thêm:
 
 * [App Profile Documentation](https://kernelsu.org/guide/app-profile.html)
 
 ---
 
-## Security
+## Bảo mật
 
-BunnySU operates at a low level of the Android system.
-Please report security issues responsibly and avoid publicly disclosing vulnerabilities before they are reviewed.
+BunnySU hoạt động ở tầng thấp của hệ thống Android.
+Vui lòng báo cáo vấn đề bảo mật một cách có trách nhiệm và tránh công khai lỗ hổng trước khi chúng được xem xét.
 
-For security-related information, see:
+Thông tin liên quan đến bảo mật:
 
 * [Security Policy](SECURITY.md)
 
 ---
 
-## License
+## Giấy phép
 
-BunnySU follows the original KernelSU licensing structure:
+BunnySU tuân theo cấu trúc giấy phép gốc của KernelSU:
 
-* Files under the `kernel` directory are licensed under **GPL-2.0-only**.
-* Other parts of the project are licensed under **GPL-3.0-or-later**, unless otherwise stated.
+* Các file trong thư mục `kernel` được cấp phép theo **GPL-2.0-only**.
+* Các phần khác của dự án được cấp phép theo **GPL-3.0-or-later**, trừ khi có ghi chú khác.
 
-See the [LICENSE](LICENSE) file for more details.
+Xem file [LICENSE](LICENSE) để biết thêm chi tiết.
 
 ---
 
 ## Credits
 
-BunnySU is inspired by and built upon the work of the Android root and kernel development community.
+BunnySU được truyền cảm hứng từ và xây dựng dựa trên công sức của cộng đồng Android root và phát triển kernel.
 
-Special thanks to:
+Đặc biệt cảm ơn:
 
 * [Kernel-Assisted Superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/)
 * [Magisk](https://github.com/topjohnwu/Magisk)
@@ -172,5 +175,5 @@ Special thanks to:
 
 <p align="center">
   <strong>BunnySU</strong><br>
-  Kernel-level root access for modern Android devices.
+  Quyền root cấp kernel cho các thiết bị Android hiện đại.
 </p>
